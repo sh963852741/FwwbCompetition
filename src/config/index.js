@@ -15,7 +15,7 @@ let appSetting = {
         subtitle: "",
         title: ""
     },
-    dashboard: { name: "OrgManage" },
+    dashboard: { name: "FixManager" },
     ueditor: {
         serverUrl: "http://stgl.ricebird.cn/ueditor/process",
         topOffset: 64,
