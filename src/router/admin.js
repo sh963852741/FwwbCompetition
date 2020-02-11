@@ -46,26 +46,10 @@ const components = {
     layout: "admin",
     component: () => import(/* webpackChunkName: "config" */"@p/Cores/DataDictionary")
   },
-  Categorise: {
-    path: "/manage/cms/categories",
-    layout: "admin",
-    component: () => import(/* webpackChunkName: "cms" */"@p/Cores/CmsCategorise")
-  },
   Profile: {
     path: "/manage/profile",
     layout: "admin",
     component: () => import(/* webpackChunkName: "security" */"@p/UCenter/Profile")
-  },
-  ArticleList: {
-    path: "/manage/cms/articlelist",
-    layout: "admin",
-    component: () => import(/* webpackChunkName: "cms" */"@p/Cores/CmsArticleList")
-  },
-  ArticleDetail: {
-    path: "/manage/cms/articledetail",
-    layout: "admin",
-    showAs: "ArticleList",
-    component: () => import(/* webpackChunkName: "cms" */"@p/Cores/CmsArticleDetail")
   },
   ...bussiness
 }
