@@ -1,39 +1,44 @@
 <template>
-    <i-card :padding="50">
+    <i-card :padding="50" :style="bgImg">
         <i-row  type="flex">
-            <i-col span="3" style="text-align: center;margin-top: 10px">
-                <Avatar style="height: 80px;width: 80px" :src="app.userInfo.avatar" />
-            </i-col>
-            <i-col span="20">
+            <i-col span="2" style="height: 1px;"></i-col>
+            <i-col style="margin-top: 10px;margin-right: 40px">
                 <i-row class="username">{{app.userInfo.realName}}</i-row>
+            </i-col>
+            <i-col style="margin-top: 25px">
                 <i-row class="tip">
-                    <i-col span="6">工作ID：0000-0000</i-col>
-                    <i-col span="6">工作间：某某某工作间</i-col>
+                    <i-col>ID：0000-0000</i-col>
+                </i-row>
+                <i-row class="tip">
+                    <i-col>工作间：某某某工作间</i-col>
                 </i-row>
             </i-col>
         </i-row>
-        <Divider />
-        <i-row class="title">待办事项</i-row>
-        <i-row>
-            <List v-if="message.length >0" :header="`您有${message.length}条待办事项`">
-                <template v-for="(item,index) in message" >
-                    <ListItem :key="index">
-                        <ListItemMeta :title="`${item.Owner}提交的${item.WorkflowName}流程已到达您的步骤`" :description="`到达时间:${item.ArriveOn}`"></ListItemMeta>
-                        <template slot="action">
-                            <li @click="dealWorkflow(item.InstanceId, item.StepId)"><a>{{item.StepName}}</a></li>
-                        </template>
-                    </ListItem>
-                </template>
-            </List>
-            <template v-else>
-                <i-row class="layout-con"><img :src="pic" /></i-row>
-            </template>
+        <i-row type="flex">
+            <i-col span="2" style="height: 1px;margin-right: 1px"></i-col>
+            <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
+            <i-col style="font-weight: bold;margin-bottom: 20px" v-else>待办已经全部完成</i-col>
         </i-row>
-        <i-row class="title">常用入口</i-row>
-        <i-row  type="flex">
-            <i-col span="7"  v-for="(item,index) in functionArray" :key="index">
-                <i-card class="layout-con" :to="item.routerTo">
-                    <i-avatar class="margin" :icon="item.icon" />{{item.title}}
+        <i-row style="margin-left: 30px">
+            <i-col span="4" style="width: 900px;height: 250px;background-color: #d1f0f0;opacity: 0.75">
+                <template v-for="(item, index) in message">
+                    <i-row style="margin-top: 15px" :key="index">
+                        <a href="/manage/wwf/config">
+                            <i-col span="1" style="margin-left: 30px"><Icon size="24" style="float: right;" type="ios-pricetag" /></i-col>
+                            <i-col span="12" style="font-weight: bold;margin-left: 6px">{{item.Owner}}提交的{{item.WorkflowName}}已经到达您的步骤：{{item.StepName}}</i-col>
+                            <!--<i-col span="2">
+                                <Icon size="20" type="ios-arrow-forward" /><Icon size="20" type="ios-arrow-forward" />
+                            </i-col>-->
+                        </a>
+                    </i-row>
+                </template>
+            </i-col>
+        </i-row>
+        <i-row>
+            <i-col span="2" style="height: 1px;margin-right: 5px"></i-col>
+            <i-col span="2" v-for="(item,index) in functionArray" style="margin-right: 60px;margin-top: -65px;height: 130px;background-color: #063559;" :key="index">
+                <i-card style="width: 100%;height: 100%;background-color: #063559;color: white" class="layout-con" :to="item.routerTo">
+                    <Icon size="30" style="display: block" class="margin" :type="item.icon" />{{item.title}}
                 </i-card>
             </i-col>
         </i-row>
@@ -43,12 +48,17 @@
 <script>
 // const axios = require("axios");
 const app = require("@/config");
-let pic = require("@/assets/icon.png");
 export default {
     data () {
         return {
             app,
-            pic,
+            bgImg: {
+                backgroundImage: 'url(' + require("@/assets/bg2.png") + ')',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '100% 100%',
+                width: '100%',
+                height: '100%'
+            },
             message: [
                 {
                     instanceId: '',
@@ -82,7 +92,7 @@ export default {
                             tabSelect: "member"
                         }
                     },
-                    icon: "md-person-add"
+                    icon: "ios-cloud-download"
                 },
                 {
                     title: "入库申请",
@@ -92,7 +102,7 @@ export default {
                             tabSelect: "member"
                         }
                     },
-                    icon: "md-person-add"
+                    icon: "ios-cloud-upload"
                 },
                 {
                     title: "采购入库申请",
@@ -102,17 +112,17 @@ export default {
                             tabSelect: "member"
                         }
                     },
-                    icon: "md-person-add"
+                    icon: "ios-cart"
                 },
                 {
-                    title: "保修申请",
+                    title: "报修申请",
                     routerTo: {
                         name: "WorkflowConfig",
                         query: {
                             tabSelect: "member"
                         }
                     },
-                    icon: "md-person-add"
+                    icon: "md-hammer"
                 },
                 {
                     title: "报废申请",
@@ -122,17 +132,7 @@ export default {
                             tabSelect: "member"
                         }
                     },
-                    icon: "md-person-add"
-                },
-                {
-                    title: "管理本WorkCell以及夹具",
-                    routerTo: {
-                        name: "WorkflowConfig",
-                        query: {
-                            tabSelect: "member"
-                        }
-                    },
-                    icon: "md-person-add"
+                    icon: "md-trash"
                 }
             ]
         }
@@ -147,6 +147,12 @@ export default {
 </script>
 
 <style lang="less">
+    a:link {color: black}
+    .tip {
+        font-size: 13px;
+        // font-family: "黑体";
+        font-weight: bold;
+    }
     .layout-con {
         margin-bottom: 24px;
         margin-right: 20px;
@@ -154,7 +160,7 @@ export default {
         color: #515a6e;
     }
     .username {
-        font-size: 32px;
+        font-size: 34px;
         color: #17233d;
         padding: 10px 0;
         font-weight: bold;
