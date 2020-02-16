@@ -3,7 +3,7 @@
         <i-row  type="flex">
             <i-col span="2" style="height: 1px;"></i-col>
             <i-col style="margin-top: 10px;margin-right: 40px">
-                <i-row class="username">{{app.userInfo.realName}}</i-row>
+                <i-row class="username">{{userInfo.realName}}</i-row>
             </i-col>
             <i-col style="margin-top: 25px">
                 <i-row class="tip">
@@ -20,7 +20,7 @@
             <i-col style="font-weight: bold;margin-bottom: 20px" v-else>待办已经全部完成</i-col>
         </i-row>
         <i-row style="margin-left: 30px">
-            <i-col span="4" style="width: 900px;height: 250px;background-color: #d1f0f0;opacity: 0.75">
+            <i-col span="4" style="width: 80%;height: 250px;background-color: #d1f0f0;opacity: 0.75">
                 <template v-for="(item, index) in message">
                     <i-row style="margin-top: 15px" :key="index">
                         <a href="/manage/wwf/config">
@@ -46,12 +46,12 @@
 </template>
 
 <script>
-// const axios = require("axios");
+const axios = require("axios");
 const app = require("@/config");
 export default {
     data () {
         return {
-            app,
+            userInfo: app.userInfo,
             bgImg: {
                 backgroundImage: 'url(' + require("@/assets/bg2.png") + ')',
                 backgroundRepeat: 'no-repeat',
@@ -59,78 +59,40 @@ export default {
                 width: '100%',
                 height: '100%'
             },
-            message: [
-                {
-                    instanceId: '',
-                    stepId: '',
-                    WorkflowName: "测试",
-                    Version: '1.0',
-                    Owner: 'liangyingshao',
-                    StepName: '管理员审核',
-                    State: 1,
-                    ExecStatus: 0,
-                    ArriveOn: '2020年2月11日'
-                },
-                {
-                    instanceId: '',
-                    stepId: '',
-                    WorkflowName: "测试",
-                    Version: '1.0',
-                    Owner: 'liangyingshao',
-                    StepName: '管理员审核',
-                    State: 1,
-                    ExecStatus: 0,
-                    ArriveOn: '2020年2月11日'
-                }
-            ],
+            message: [],
             functionArray: [
                 {
                     title: "出库申请",
                     routerTo: {
-                        name: "WorkflowConfig",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "WorkflowConfig"
                     },
                     icon: "ios-cloud-download"
                 },
                 {
                     title: "入库申请",
                     routerTo: {
-                        name: "WorkflowConfig",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "WorkflowConfig"
                     },
                     icon: "ios-cloud-upload"
                 },
                 {
                     title: "采购入库申请",
                     routerTo: {
-                        name: "WorkflowConfig",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "WorkflowConfig"
                     },
                     icon: "ios-cart"
                 },
                 {
                     title: "报修申请",
                     routerTo: {
-                        name: "WorkflowConfig",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "WorkflowConfig"
                     },
                     icon: "md-hammer"
                 },
                 {
                     title: "报废申请",
                     routerTo: {
-                        name: "WorkflowConfig",
-                        query: {
-                            tabSelect: "member"
-                        }
+                        name: "WorkflowConfig"
                     },
                     icon: "md-trash"
                 }
@@ -138,10 +100,18 @@ export default {
         }
     },
     methods: {
-
+        getPending () {
+            axios.post("/api/workflow/Pending", {}, msg => {
+                this.message = msg.data;
+            })
+        },
+        dealWorkflow (instanceId, stepId) {
+            window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
+        }
     },
-    mounted: {
-
+    mounted () {
+        app.title = "工具夹管理";
+        this.getPending();
     }
 }
 </script>
