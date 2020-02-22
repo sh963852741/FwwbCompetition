@@ -1,6 +1,6 @@
 <template>
     <i-card :padding="50" :style="bgImg">
-        <i-row  type="flex">
+        <i-row type="flex">
             <i-col span="2" style="height: 1px;"></i-col>
             <i-col style="margin-top: 10px;margin-right: 40px">
                 <i-row class="username">{{userInfo.realName}}</i-row>
@@ -16,11 +16,10 @@
         </i-row>
         <i-row type="flex">
             <i-col span="2" style="height: 1px;margin-right: 1px"></i-col>
-            <i-col v-if="message.length >0" style="font-weight: bold;margin-bottom: 20px">您当前有{{message.length}}条待办事项</i-col>
-            <i-col style="font-weight: bold;margin-bottom: 20px" v-else>待办已经全部完成</i-col>
+            <i-col style="font-weight: bold;margin-bottom: 20px">{{message.length === 0 ? "待办已经全部完成" : `您当前有${message.length}条待办事项`}}</i-col>
         </i-row>
         <i-row style="margin-left: 30px">
-            <i-col span="4" style="width: 80%;height: 250px;background-color: #d1f0f0;opacity: 0.75">
+            <i-col span="4" style="width: 80%;height: 280px;background-color: #d1f0f0;opacity: 0.75">
                 <template v-for="(item, index) in message">
                     <i-row style="margin-top: 15px" :key="index">
                         <a href="/manage/wwf/config">
@@ -37,8 +36,8 @@
         <i-row>
             <i-col span="2" style="height: 1px;margin-right: 5px"></i-col>
             <i-col span="2" v-for="(item,index) in functionArray" style="margin-right: 60px;margin-top: -65px;height: 130px;background-color: #063559;" :key="index">
-                <i-card style="width: 100%;height: 100%;background-color: #063559;color: white" class="layout-con" :to="item.routerTo">
-                    <Icon size="30" style="display: block" class="margin" :type="item.icon" />{{item.title}}
+                <i-card style="color: white;" class="layout-con" :to="item.routerTo">
+                    <i-icon size="30" style="display: block" class="margin" :type="item.icon" />{{item.title}}
                 </i-card>
             </i-col>
         </i-row>
@@ -110,20 +109,22 @@ export default {
         }
     },
     mounted () {
-        app.title = "工具夹管理";
+        app.title = "工作间管理";
         this.getPending();
     }
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
     a:link {color: black}
     .tip {
         font-size: 13px;
-        // font-family: "黑体";
         font-weight: bold;
     }
     .layout-con {
+        width: 100%;
+        height: 100%;
+        background-color: #063559;
         margin-bottom: 24px;
         margin-right: 20px;
         text-align: center;
