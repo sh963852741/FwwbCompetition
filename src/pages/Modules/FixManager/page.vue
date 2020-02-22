@@ -19,18 +19,21 @@
             <i-col style="font-weight: bold;margin-bottom: 20px">{{message.length === 0 ? "待办已经全部完成" : `您当前有${message.length}条待办事项`}}</i-col>
         </i-row>
         <i-row style="margin-left: 30px">
-            <i-col span="4" style="width: 80%;height: 280px;background-color: #d1f0f0;opacity: 0.75">
-                <template v-for="(item, index) in message">
-                    <i-row style="margin-top: 15px" :key="index">
-                        <a href="/manage/wwf/config">
-                            <i-col span="1" style="margin-left: 30px"><Icon size="24" style="float: right;" type="ios-pricetag" /></i-col>
-                            <i-col span="12" style="font-weight: bold;margin-left: 6px">{{item.Owner}}提交的{{item.WorkflowName}}已经到达您的步骤：{{item.StepName}}</i-col>
-                            <!--<i-col span="2">
-                                <Icon size="20" type="ios-arrow-forward" /><Icon size="20" type="ios-arrow-forward" />
-                            </i-col>-->
-                        </a>
-                    </i-row>
-                </template>
+            <i-col span="4" style="width: 80%;height: 280px;background-color: #d1f0f0;opacity: 0.75;overflow: hidden">
+                <i-row style="height: 70%;overflow: hidden">
+                    <template v-for="(item, index) in message">
+                        <i-row style="margin-top: 15px" :key="index" v-if="index<5">
+                            <a href="/manage/wwf/config">
+                                <i-col span="1" style="margin-left: 30px"><Icon size="24" style="float: right;" type="ios-pricetag" /></i-col>
+                                <i-col span="12" style="font-weight: bold;margin-left: 6px">{{item.Owner}}提交的{{item.WorkflowName}}已经到达您的步骤：{{item.StepName}}</i-col>
+                                <!--<i-col span="2">
+                                    <Icon size="20" type="ios-arrow-forward" /><Icon size="20" type="ios-arrow-forward" />
+                                </i-col>-->
+                            </a>
+                        </i-row>
+                    </template>
+                </i-row>
+                <i-row style="width: 100%;height: 30%;" />
             </i-col>
         </i-row>
         <i-row>
