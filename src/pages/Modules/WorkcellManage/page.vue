@@ -14,7 +14,7 @@
                 </i-col>
             </i-row>
             <i-tabs>
-                <i-tab-pane label="基本信息" style="background-color: rgba(255, 255, 255, 0.75);">
+                <i-tab-pane label="基本信息">
                     <i-form>
                         <i-row type="flex">
                             <i-col span="10">
@@ -119,6 +119,8 @@
                                 <i-button type="text">修改记录</i-button>
                             </i-form>
                             <i-divider />
+                            <i-input search enter-button placeholder="搜索夹具"/>
+                            <br>
                             <i-table :columns="fixtureTableCol"/>
                         </i-col>
                     </i-row>
