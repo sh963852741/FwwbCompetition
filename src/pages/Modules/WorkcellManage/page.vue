@@ -135,11 +135,18 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
+        <i-modal>
+            <component is="user-form"></component>
+        </i-modal>
     </i-row>
 </template>
 <script>
 const app = require("@/config");
+const userForm = require("./userform");
 export default {
+    components: {
+        "user-form": userForm
+    },
     data () {
         return {
             app,
