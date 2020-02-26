@@ -136,7 +136,7 @@
             </i-tabs>
         </i-card>
         <i-modal>
-            <component is="user-form"></component>
+            <component :is="'user-form'"></component>
         </i-modal>
     </i-row>
 </template>
