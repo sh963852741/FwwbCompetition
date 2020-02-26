@@ -49,8 +49,8 @@
                 </i-tab-pane>
                 <i-tab-pane label="工夹具管理" style="background-color: rgba(255, 255, 255, 0.75);">
                     <i-row>
-                        <i-col span="6"><Tree :data="fixtureTree" @on-select-change="test"></Tree></i-col>
-                        <i-col span="18">
+                        <i-col span="5"><Tree :data="fixtureTree" @on-select-change="test"></Tree></i-col>
+                        <i-col span="18" offset="1">
                             <i-form>
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="6">
@@ -194,6 +194,45 @@ export default {
                 {
                     title: 'JW05 工作间',
                     expand: true,
+                    render: (h, { root, node, data }) => {
+                        return h('span', {
+                            style: {
+                                display: 'inline-block',
+                                width: '100%'
+                            }
+                        }, [
+                            h('span', [
+                                h('Icon', {
+                                    props: {
+                                        type: 'ios-folder-outline'
+                                    },
+                                    style: {
+                                        marginRight: '8px'
+                                    }
+                                }),
+                                h('span', data.title)
+                            ]),
+                            h('span', {
+                                style: {
+                                    display: 'inline-block',
+                                    float: 'right'
+                                }
+                            }, [
+                                h('Button', {
+                                    props: Object.assign({}, this.buttonProps, {
+                                        icon: 'ios-add',
+                                        type: 'primary'
+                                    }),
+                                    style: {
+                                        width: '64px'
+                                    },
+                                    on: {
+                                        click: () => { this.addFixDef(data) }
+                                    }
+                                })
+                            ])
+                        ]);
+                    },
                     children: [
                         {
                             title: 'EF2189 夹具定义',
@@ -221,7 +260,11 @@ export default {
                         }
                     ]
                 }
-            ]
+            ],
+            buttonProps: {
+                type: 'default',
+                size: 'small'
+            }
         }
     },
     mounted () {
@@ -232,6 +275,10 @@ export default {
             if (!e[0].children) {
                 alert("还没有夹具实体详细页");
             }
+        },
+        addFixDef (data) {
+        },
+        addUser () {
         }
     }
 }
@@ -246,5 +293,8 @@ export default {
 }
 .tip {
     color:#808695;
+}
+.ivu-tree-title{
+        width: 100%;
 }
 </style>
