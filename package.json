@@ -1,8 +1,8 @@
 {
-  "name": "tw-org-manager",
+  "name": "fix-manager",
   "version": "1.0.0",
-  "description": "厦门大学团委社团管理",
-  "author": "厦门米雀软件科技有限公司",
+  "description": "工具夹管理",
+  "author": "海西嘉信",
   "private": false,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
