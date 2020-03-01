@@ -15,8 +15,8 @@ module.exports = {
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/WorkcellManage")
     },
     FixDefManage: {
-        path: "/manage/fixdef",
+        path: "/manage/fixcontainer",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/WorkcellManage/fixDefForm")
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/WorkcellManage/fixContainer")
     }
 };
