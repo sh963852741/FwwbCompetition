@@ -7,9 +7,9 @@
                 </i-col>
                 <i-col span="21">
                     <i-row>
-                        <i-row class="title">WorkCell JW-05</i-row>
+                        <i-row class="title">{{workcellInfo.Name}}</i-row>
                         <i-col class="tip" span="3">访问级别：管理员</i-col>
-                        <i-col class="tip" span="3">WorCellID：7</i-col>
+                        <i-col class="tip" span="3">WorCellID：{{workcellInfo.Code||'待填写'}}</i-col>
                     </i-row>
                 </i-col>
             </i-row>
@@ -19,32 +19,39 @@
                         <i-row type="flex">
                             <i-col span="10">
                                 <i-form-item label="工作间名称">
-                                    <i-input/>
+                                    <i-input v-model="workcellInfo.Name"/>
+                                </i-form-item>
+                            </i-col>
+                        </i-row>
+                         <i-row type="flex">
+                            <i-col span="10">
+                                <i-form-item label="工作间ID">
+                                    <i-input v-model="workcellInfo.Code"/>
                                 </i-form-item>
                             </i-col>
                         </i-row>
                         <i-row type="flex">
                             <i-col span="10">
                                 <i-form-item label="工作间位置">
-                                    <i-input/>
+                                    <i-input v-model="workcellInfo.FixContainerNum"/>
                                 </i-form-item>
                             </i-col>
                         </i-row>
                         <i-row type="flex">
                             <i-col span="10">
-                                <i-form-item label="工作间">
-                                    <i-input/>
+                                <i-form-item label="夹具柜数量">
+                                    <i-input v-model="workcellInfo.FixContainerNum"/>
                                 </i-form-item>
                             </i-col>
                         </i-row>
                         <i-row type="flex">
                             <i-col span="10">
                                 <i-form-item label="工具夹最大容纳数">
-                                    <i-input/>
+                                    <i-input v-model="workcellInfo.FixCapacity"/>
                                 </i-form-item>
                             </i-col>
                         </i-row>
-                        <i-button type="primary">保存</i-button>
+                        <i-button type="primary" @click="saveWorkCell()">保存</i-button>
                     </i-form>
                 </i-tab-pane>
                 <i-tab-pane label="工夹具管理" style="background-color: rgba(255, 255, 255, 0.75);">
@@ -127,7 +134,7 @@
                 </i-tab-pane>
                 <i-tab-pane label="用户管理" style="background-color: rgba(255, 255, 255, 0.75);">
                     <i-row type="flex" :gutter="16">
-                        <i-col><i-button type="primary">添加成员</i-button></i-col>
+                        <i-col><i-button type="primary" @click="addUser()">添加成员</i-button></i-col>
                         <i-col><i-input search enter-button placeholder="搜索成员"/></i-col>
                     </i-row>
                     <br/>
@@ -135,17 +142,20 @@
                 </i-tab-pane>
             </i-tabs>
         </i-card>
-        <i-modal>
-            <component :is="'user-form'"></component>
+        <i-modal v-model="showModal" :title="modalTitle"  @on-ok="submit()">
+            <component :is="bindingForm" ref="form" :formData="formData"></component>
         </i-modal>
     </i-row>
 </template>
 <script>
+import userForm from "./userForm";
+import fixDefForm from "./fixDefForm";
 const app = require("@/config");
-const userForm = require("./userform");
+let axios = require("axios");
 export default {
     components: {
-        "user-form": userForm
+        "user-form": userForm,
+        "fix-def-form": fixDefForm
     },
     data () {
         return {
@@ -219,10 +229,11 @@ export default {
                                 }
                             }, [
                                 h('Button', {
-                                    props: Object.assign({}, this.buttonProps, {
+                                    props: {
+                                        size: 'small',
                                         icon: 'ios-add',
                                         type: 'primary'
-                                    }),
+                                    },
                                     style: {
                                         width: '64px'
                                     },
@@ -233,42 +244,24 @@ export default {
                             ])
                         ]);
                     },
-                    children: [
-                        {
-                            title: 'EF2189 夹具定义',
-                            expand: true,
-                            children: [
-                                {
-                                    title: '1号夹具'
-                                },
-                                {
-                                    title: '2号夹具'
-                                }
-                            ]
-                        },
-                        {
-                            title: 'EF0789 夹具定义',
-                            expand: true,
-                            children: [
-                                {
-                                    title: '1号夹具'
-                                },
-                                {
-                                    title: '2号夹具'
-                                }
-                            ]
-                        }
-                    ]
+                    children: []
                 }
             ],
-            buttonProps: {
-                type: 'default',
-                size: 'small'
-            }
+            bindingForm: "user-form",
+            showModal: false,
+            modalTitle: '',
+            workcellInfo: {},
+            formData: {}
         }
     },
     mounted () {
         app.title = "工作间管理"
+        axios.post("/api/security/GetOrgDetail", {}, msg => {
+            this.workcellInfo = msg.data;
+            axios.post("/api/fwwb/GetFixDefs", {departId: this.workcellInfo.ID}, msg => {
+                this.fixtureTree.children = msg.data;
+            })
+        })
     },
     methods: {
         test (e) {
@@ -277,8 +270,33 @@ export default {
             }
         },
         addFixDef (data) {
+            this.bindingForm = "fix-def-form";
+            this.modalTitle = "新增夹具定义";
+            this.showModal = true;
         },
         addUser () {
+            this.bindingForm = "user-form";
+            this.modalTitle = "新增用户";
+            this.showModal = true;
+        },
+        getWorkCellInfo (id) {
+            axios.post("/api/security/GetOrgDetail", {}, msg => {
+                this.workcellInfo = msg.data;
+            })
+        },
+        getFixDefs () {
+            axios.post("/api/fwwb/GetFixDefs", {departId: this.workcellInfo.ID}, msg => {
+                this.fixtureTree = msg.data;
+            })
+        },
+        saveWorkCell () {
+            axios.post("/api/security/SaveDepartV2", {...this.workcellInfo}, msg => {
+
+            })
+        },
+        submit () {
+            let form = this.$refs["form"];
+            form.submit(this.workcellInfo.ID, () => {});
         }
     }
 }

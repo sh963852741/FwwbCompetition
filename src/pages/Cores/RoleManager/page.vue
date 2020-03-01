@@ -1,6 +1,9 @@
 <template>
     <i-card id="role-manager">
-        <i-button v-if="permissions.add" type="primary" @click="addRole">添加角色</i-button>
+        <i-row type="flex" :gutter="16">
+            <i-col><i-input placeholder="请输入角色名" v-model="newRole"/></i-col>
+            <i-col><i-button v-if="permissions.add" type="primary" @click="addRole" :loading="loading">添加角色</i-button></i-col>
+        </i-row>
         <i-divider />
         <i-collapse v-if="data.length">
             <i-panel v-for="(item, index) in data" :key="index">
@@ -82,47 +85,22 @@ export default {
             })
         },
         addRole () {
-            let onOK = () => {
-                axios.post("/api/security/SaveRole", { role: this.newRole }, msg => {
-                    if (msg.success) {
-                        this.$Message.success(msg.msg);
-                    } else {
-                        this.$Message.warning(msg.msg);
-                    }
-                    this.getData();
-                    this.$Modal.remove();
-                })
-            };
-
-            this.$Modal.confirm({
-                render: (h) => {
-                    return h('Input', {
-                        props: {
-                            value: this.newRole,
-                            autofocus: true,
-                            placeholder: '请输入角色名'
-                        },
-                        loading: true,
-                        on: {
-                            input: (val) => {
-                                this.newRole = val;
-                            },
-                            "on-keyup" (event) {
-                                if (event.keyCode === 13) {
-                                    onOK();
-                                }
-                            }
-                        },
-                        onOK () {
-                            onOK();
-                        }
-                    })
+            this.loading = true;
+            axios.post("/api/security/SaveRole", { role: this.newRole }, msg => {
+                if (msg.success) {
+                    this.$Message.success(msg.msg);
+                    this.newRole = "";
+                } else {
+                    this.$Message.warning(msg.msg);
                 }
+                this.getData();
+                this.loading = false;
             })
         }
     },
     data () {
         return {
+            loading: false,
             newRole: "",
             data: {},
             all: {},

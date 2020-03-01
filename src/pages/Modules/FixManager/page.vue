@@ -56,6 +56,7 @@ export default {
                 height: '100%'
             },
             message: [],
+            workcellInfo: {},
             functionArray: [
                 {
                     title: "出库申请",
@@ -103,10 +104,16 @@ export default {
         },
         dealWorkflow (instanceId, stepId) {
             window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
+        },
+        getWorkCellInfo (id) {
+            axios.post(" /api/security/GetOrgDetail", {}, msg => {
+                this.workcellInfo = msg.data;
+            })
         }
     },
     mounted () {
         app.title = "工作间管理";
+        this.getWorkCellInfo()
         this.getPending();
     }
 }
