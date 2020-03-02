@@ -12,11 +12,11 @@ module.exports = {
     WorkcellManage: {
         path: "/manage/workcell",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/WorkcellManage")
+        component: () => import(/* webpackChunkName: "FixManager" */"@p/Modules/WorkcellManage")
     },
-    FixContainer: {
-        path: "/manage/fixcontainer",
+    FixDetail: {
+        path: "/manage/fixdetail",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/WorkcellManage/fixContainer")
+        component: () => import(/* webpackChunkName: "FixManager" */"@p/Modules/FixDetail")
     }
 };
