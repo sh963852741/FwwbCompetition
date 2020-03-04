@@ -56,7 +56,7 @@
                 </i-tab-pane>
                 <i-tab-pane label="工夹具管理" style="background-color: rgba(255, 255, 255, 0.75);">
                     <i-row>
-                        <i-col span="5"><Tree :data="fixtureTree" @on-select-change="test"></Tree></i-col>
+                        <i-col span="5"><Tree :data="fixtureTree" @on-select-change="test" :render="renderContent"></Tree></i-col>
                         <i-col span="18" offset="1">
                             <i-form>
                                 <i-row type="flex" justify="space-between">
@@ -543,7 +543,12 @@ export default {
         axios.post("/api/security/GetOrgDetail", {}, msg => {
             this.workcellInfo = msg.data;
             axios.post("/api/fwwb/GetFixDefs", {departId: this.workcellInfo.ID}, msg => {
-                this.fixtureTree.children = msg.data;
+                this.fixtureTree[0].children = msg.data;
+                let i = 0;
+                for (i = 0; i < this.fixtureTree[0].children.length; i++) {
+                    this.$set(this.fixtureTree[0].children[i], 'title', this.fixtureTree[0].children[i].Name);
+                    this.$set(this.fixtureTree[0].children[i], 'isParent', true);
+                }
             })
         });
         let ele = document.getElementById("bin1");
@@ -590,6 +595,16 @@ export default {
         submit () {
             let form = this.$refs["form"];
             form.submit(this.workcellInfo.ID, () => {});
+        },
+        renderContent (h, { root, node, data }) {
+            return (
+                <span>
+                    <span>
+                        { data.title }
+                    </span>
+                    <button v-show ={data.isParent !== undefined} class="button ivu-btn ivu-btn-small ivu-btn-icon-only" onClick={ () => { this.append(data); } }><icon type='ios-add'/></button>
+                </span>
+                );
         }
     }
 }
@@ -607,5 +622,9 @@ export default {
 }
 .ivu-tree-title{
         width: 100%;
+}
+.button{
+    float: right;
+    margin-right:18px;
 }
 </style>
