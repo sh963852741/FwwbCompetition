@@ -5,84 +5,14 @@
                     <i-avatar :src="app.webInfo.avatar" size="120"/>
                 </i-col>
                 <i-col span="21">
-                    <i-row style="font-size:30px; margin-bottom:10px">夹具名称：名字字字字字</i-row>
+                    <i-row style="font-size:30px; margin-bottom:10px">夹具名称：{{entityName}}</i-row>
                     <i-row>
-                        <i-col>夹具实体数量：00</i-col>
+                        <i-col>夹具实体数量：{{tableData.length}}</i-col>
                     </i-row>
                 </i-col>
             </i-row>
         <i-tabs v-model="tabSelect" style="margin-top: 20px">
-            <i-tab-pane label="基本信息" name="basicInfo">
-                <i-row style="margin-left: 15px">
-                    <i-spin fix size="large" v-show="tableLoading"></i-spin>
-                    <i-col span="16">
-                        <i-form :model="fixInfo" :rules="ruleForBasic" ref="form">
-                            <i-row type="flex" justify="space-between">
-                                <i-col span="22">
-                                    <i-form-item label="夹具名称" span="8" prop="Name">
-                                        <i-input v-model="fixInfo.Name"/>
-                                    </i-form-item>
-                                </i-col>
-                            </i-row>
-                            <i-row type="flex">
-                                <i-col span="10">
-                                    <i-form-item label="夹具代码" prop="Code">
-                                        <i-input v-model="fixInfo.Code" />
-                                    </i-form-item>
-                                </i-col>
-                                <i-col span="10" offset="2">
-                                    <i-form-item label="夹具用途" prop="UsedFor">
-                                        <i-input v-model="fixInfo.UsedFor" />
-                                    </i-form-item>
-                                </i-col>
-                            </i-row>
-                            <i-row type="flex">
-                                <i-col span="10">
-                                    <i-form-item label="夹具所属类别">
-                                        <i-input v-model="fixInfo.Family"/>
-                                    </i-form-item>
-                                </i-col>
-                                <i-col span="10" offset="2">
-                                    <i-form-item label="夹具模组">
-                                        <i-input v-model="fixInfo.Model"/>
-                                    </i-form-item>
-                                </i-col>
-                            </i-row>
-                            <i-row type="flex">
-                                <i-col span="10">
-                                    <i-form-item label="夹具料号">
-                                        <i-input v-model="fixInfo.PartNo"/>
-                                    </i-form-item>
-                                </i-col>
-                                <i-col span="10" offset="2">
-                                    <i-form-item label="建档日期" prop="DocDate">
-                                        <i-date-picker type="date" v-model="fixInfo.DocDate" format="yyyy年MM月dd日" />
-                                    </i-form-item>
-                                </i-col>
-                            </i-row>
-                        </i-form>
-                        <i-button type="primary" @click="savefixDetail()" :loading="isSaving">保存</i-button>
-                    </i-col>
-                    <i-col span="7" offset="1">
-                        <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
-                        <i-drawer title="修改记录" v-model="showLog" scrollable width="20">
-                            <i-timeline class="timeline i-scrollbar-hide">
-                                <TimelineItem v-for="(item,index) in logs" :key="index">
-                                    <i-row>
-                                        <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
-                                        <p class="content">
-                                            <i-row v-for="(d,index) in item.Details" :key="index">
-                                                {{d}}
-                                            </i-row>
-                                        </p>
-                                    </i-row>
-                                </TimelineItem>
-                            </i-timeline>
-                        </i-drawer>
-                    </i-col>
-                </i-row>
-            </i-tab-pane>
-            <i-tab-pane label="工具夹实体" name="entity">
+            <i-tab-pane label="夹具实体列表" name="entity">
                 <i-card dis-hover>
                         <i-row type="flex" justify="space-between" align="middle" slot="title">
                             <i-col>
@@ -98,7 +28,11 @@
                                 </i-row>
                             </i-col>
                         </i-row>
-                        <i-table stripe :columns="tableCol.fix" :data="tableData.fix" :loading="tableLoading">
+                        <i-table row-key="ID" stripe :columns="tableCol.fix" :data="tableData" :loading="tableLoading">
+                            <template slot="Action" slot-scope="{row}">
+                                <i-button @click="modifyEntity(row)">修改</i-button>
+                                <i-button @click="delEntity(row.ID)">删除</i-button>
+                            </template>
                         </i-table>
                         <br/>
                         <i-page show-sizer show-total :total="pager.total" @on-change="getFixTable($event, null)" @on-page-size-change="getFixTable(null, $event)" />
@@ -151,19 +85,32 @@
                     内容待定
                 </i-row>
             </i-tab-pane>
+            <i-tab-pane label="工具夹实体定位" name="Location">
+                <i-row style="margin-left: 15px;">
+                    内容待定
+                </i-row>
+            </i-tab-pane>
         </i-tabs>
+        <i-modal :z-index="10" v-model="modalShow" :title="component.title || '暂无'" @on-ok="submit()" @on-cancel="cancel()">
+            <component :is="component.name" ref="Form" :modalData="recordData"></component>
+        </i-modal>
     </i-card>
 </template>
 
 <script>
+import entityForm from "./entity";
 const app = require("@/config");
 const tableCol = require("./tableCol");
+const axios = require("axios");
 export default {
+    components: {
+        "entity-form": entityForm
+    },
     data () {
         return {
             app,
             tableCol,
-            showLog: false,
+            entityName: "宋润涵的夹具",
             inRecords: [
                 {
                     Code: 'oooo-oooo',
@@ -258,27 +205,102 @@ export default {
             ],
             tabSelect: "",
             tableLoading: false,
-            fixInfo: {},
-            ruleForBasic: {},
             isSaving: false,
-            logs: [],
-            tableData: {},
+            tableData: [],
             pager: {
                 total: 0,
                 page: 1,
                 pageSize: 10
             },
-            keyword: ''
+            keyword: '',
+            id: "",
+            WorkcellID: "",
+            component: {
+                name: "",
+                title: ""
+            },
+            recordData: {},
+            callbackFunc: () => {},
+            modalShow: false
         }
     },
     methods: {
-        savefixDetail () {
+        submit () {
+            let form = this.$refs["Form"];
+            form.submit(this.callbackFunc);
+        },
+        cancel () {
+        },
+        modifyEntity (row) {
+            axios.post("/api/fwwb/GetFix", {id: row.ID}, msg => {
+                if (!msg.success) {
+                    this.recordData = msg.data;
+                    // 假数据 应删
+                    this.recordData = row;
+                    this.component.name = "entity-form";
+                    this.component.title = "修改夹具实体";
+                    this.modalShow = true;
+                    this.callbackFunc = this.getFixEntity;
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
+        delEntity (ID) {
+            axios.post("/api/fwwb/RemoveFix", {id: ID}, msg => {
+                if (msg.success) {
+                    this.$Message.success("部门信息保存成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+                this.getFixEntity(this.id, this.WorkcellID);
+            })
         },
         getFixTable (page, pageSize) {
+        },
+        getFixEntity (id, WorkcellID) {
+            this.tableLoading = true;
+            axios.post("/api/fwwb/GetFixs", {WorkcellId: WorkcellID, defId: id}, msg => {
+                this.tableData = msg.data;
+                this.tableData = [
+                    {
+                        ID: "id123456",
+                        Code: "code123456",
+                        DefId: "defId123456",
+                        SeqID: "1",
+                        BillNo: "2019-12-1-0001",
+                        RegDate: "2020/3/6",
+                        ProduceDate: "2019/3/6",
+                        UsedCout: 0,
+                        Location: "A-113-c",
+                        RepairDate: "",
+                        Owner: "sly"
+                    }
+                ]
+                this.tableLoading = false;
+            })
         }
     },
     mounted () {
-        this.tabSelect = "basicInfo";
+        app.title = "夹具管理";
+        this.$Spin.show({
+            render: (h) => {
+                return h('div', [
+                    h('Icon', {
+                        'class': 'spin-icon-load',
+                        props: {
+                            type: 'ios-loading',
+                            size: 18
+                        }
+                    }),
+                    h('div', '正在获取夹具实体列表信息，请稍候……')
+                ])
+            }
+        });
+        this.id = "6a9cf94f-39b7-4355-aa3e-43ba92cd0aa4";// this.$route.query.id; "6a9cf94f-39b7-4355-aa3e-43ba92cd0aa4"
+        this.WorkcellID = "7c19253d-7aa3-4b79-8d07-2958c46fc684";// this.$route.query.WorkcellID;
+        this.getFixEntity(this.id, this.WorkcellID);
+        this.tabSelect = this.$route.query.tabSelect || "entity";
     }
 }
 </script>
