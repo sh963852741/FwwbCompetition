@@ -56,13 +56,13 @@
                 </i-tab-pane>
                 <i-tab-pane label="工夹具管理" style="background-color: rgba(255, 255, 255, 0.75);">
                     <i-row>
-                        <i-col span="5"><Tree :data="fixtureTree" @on-select-change="test" :render="renderContent"></Tree></i-col>
+                        <i-col span="5"><Tree :data="fixtureTree" @on-select-change="selectTreeNode" :render="renderContent"></Tree></i-col>
                         <i-col span="18" offset="1">
                             <i-form>
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="6">
                                         <i-form-item label="夹具代码">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.Code"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="6">
@@ -128,7 +128,7 @@
                             <i-divider />
                             <i-input search enter-button placeholder="搜索夹具"/>
                             <br>
-                            <i-table :columns="fixtureTableCol"/>
+                            <i-table :columns="fixtureTableCol" :data="fixtures"/>
                         </i-col>
                     </i-row>
                 </i-tab-pane>
@@ -179,13 +179,15 @@
 <script>
 import userForm from "./userForm";
 import fixDefForm from "./fixDefForm";
+import fixtureForm from "./fixtureForm";
 const app = require("@/config");
 const echarts = require("echarts");
 const axios = require("axios");
 export default {
     components: {
         "user-form": userForm,
-        "fix-def-form": fixDefForm
+        "fix-def-form": fixDefForm,
+        "fixture-form": fixtureForm
     },
     data () {
         return {
@@ -282,6 +284,8 @@ export default {
             modalTitle: '',
             workcellInfo: {},
             formData: {},
+            fixDefInfo: {},
+            fixtures: [],
             binData: [
                 {
                     name: '库位A1',
@@ -535,7 +539,56 @@ export default {
                         }
                     ]
                 }
-            ]
+            ],
+            renderContent: (h, { root, node, data }) => {
+                return h('span', {
+                    style: {
+                        display: 'inline-block',
+                        width: '100%'
+                    }
+                }, [
+                    h('span', [
+                        h('Icon', {
+                            props: {
+                                type: 'ios-folder-outline'
+                            },
+                            style: {
+                                marginRight: '8px'
+                            }
+                        }),
+                        h('span', data.title)
+                    ]),
+                    h('span', {
+                        style: {
+                            display: 'flex',
+                            float: 'right',
+                            width: '64px'
+                        }
+                    }, [
+                        h('Button', {
+                            props: {
+                                size: 'small',
+                                icon: 'md-add',
+                                'v-show': data.isParent
+                            },
+                            on: {
+                                click: () => { this.addFixture(data) }
+                            }
+                        }),
+                        h('Button', {
+                            props: {
+                                size: 'small',
+                                icon: 'md-remove',
+                                'v-show': data.isParent,
+                                type: 'warning'
+                            },
+                            on: {
+                                click: () => { this.removeFixture(data) }
+                            }
+                        })
+                    ])
+                ]);
+            }
         }
     },
     mounted () {
@@ -562,14 +615,23 @@ export default {
         instance3.setOption(this.bin3);
     },
     methods: {
-        test (e) {
-            if (!e[0].children) {
-                alert("还没有夹具实体详细页");
+        selectTreeNode (e) {
+            if (e[0].isParent) { // 如果是夹具定义
+                this.fixDefInfo = e[0];
+                axios.post("/api/fwwb/GetFixs", {defId: this.fixDefInfo.ID, WorkcellID: this.fixDefInfo.WorkcellId}, msg => {
+                    this.fixtures = msg.data;
+                })
             }
         },
         addFixDef (data) {
             this.bindingForm = "fix-def-form";
             this.modalTitle = "新增夹具定义";
+            this.showModal = true;
+        },
+        addFixture (data) {
+            this.bindingForm = "fixture-form";
+            this.modalTitle = "新增夹具实体";
+            this.formData.WorkcellID = this.workcellInfo.ID;
             this.showModal = true;
         },
         addUser () {
@@ -592,19 +654,14 @@ export default {
 
             })
         },
+        removeFixture (data) {
+            axios.post("/api/fwwb/RemoveFixDefs", {id: data.ID}, msg => {
+
+            })
+        },
         submit () {
             let form = this.$refs["form"];
             form.submit(this.workcellInfo.ID, () => {});
-        },
-        renderContent (h, { root, node, data }) {
-            return (
-                <span>
-                    <span>
-                        { data.title }
-                    </span>
-                    <button v-show ={data.isParent !== undefined} class="button ivu-btn ivu-btn-small ivu-btn-icon-only" onClick={ () => { this.append(data); } }><icon type='ios-add'/></button>
-                </span>
-                );
         }
     }
 }
@@ -621,10 +678,6 @@ export default {
     color:#808695;
 }
 .ivu-tree-title{
-        width: 100%;
-}
-.button{
-    float: right;
-    margin-right:18px;
+    width: 100%;
 }
 </style>

@@ -3,56 +3,37 @@
         <i-form>
             <i-row type="flex" justify="space-between">
                 <i-col span="11">
-                    <i-form-item label="夹具代码">
-                        <i-input v-model="formData.Code"/>
+                    <i-form-item label="夹具定义ID">
+                        <i-cascader v-model="formData.DefId" :data="defList"/>
                     </i-form-item>
                 </i-col>
                 <i-col span="11">
-                    <i-form-item label="夹具名称">
-                        <i-input v-model="formData.Name"/>
+                    <i-form-item label="夹具序列号">
+                        <i-input v-model="formData.SeqID"/>
                     </i-form-item>
                 </i-col>
             </i-row>
             <i-row type="flex" justify="space-between">
                 <i-col span="11">
-                    <i-form-item label="所属大类">
-                        <i-input/>
+                    <i-form-item label="采购单据号">
+                        <i-input v-model="formData.BillNo"/>
                     </i-form-item>
                 </i-col>
                 <i-col span="11">
-                    <i-form-item label="夹具模组">
-                        <i-input/>
+                    <i-form-item label="生产日期">
+                        <i-input v-model="formData.ProduceDate"/>
                     </i-form-item>
                 </i-col>
             </i-row>
             <i-row type="flex" justify="space-between">
                 <i-col span="11">
-                    <i-form-item label="夹具料号">
-                        <i-input/>
-                    </i-form-item>
-                </i-col>
-                <i-col span="11">
-                    <i-form-item label="配备的数量">
-                        <i-input/>
-                    </i-form-item>
-                </i-col>
-            </i-row>
-            <i-row type="flex" justify="space-between">
-                <i-col span="24">
-                    <i-form-item label="用途">
-                        <i-input/>
-                    </i-form-item>
-                </i-col>
-            </i-row>
-            <i-row type="flex" justify="space-between">
-                <i-col span="11">
-                    <i-form-item label="保养点检周期">
-                        <i-input/>
+                    <i-form-item label="上一次保养时间">
+                        <i-input v-model="formData.RepairDate"/>
                     </i-form-item>
                 </i-col>
                 <i-col span="11">
                     <i-form-item label="责任人">
-                        <i-input/>
+                        <i-input v-model="formData.Owner"/>
                     </i-form-item>
                 </i-col>
             </i-row>
@@ -60,6 +41,7 @@
     </i-row>
 </template>
 <script>
+import getFixDefs from "./fixDefList.js";
 const axios = require("axios");
 export default {
     props: {
@@ -69,11 +51,13 @@ export default {
         }
     },
     data () {
-        return {}
+        return {
+            defList: []
+        }
     },
     methods: {
         submit (WorkcellId, callback) {
-            axios.post("/api/fwwb/SaveFixDef", {WorkcellId, ...this.formData}, msg => {
+            axios.post("/api/fwwb/SaveFix", {...this.formData}, msg => {
                 this.resetFields();
                 if (msg.success) {
                     callback();
@@ -82,6 +66,13 @@ export default {
                 }
             });
         }
+    },
+    mounted () {
+        let defListPromise = getFixDefs(this.formData.WorkcellID);
+        defListPromise.then(msg => {
+            msg[0].lable = "这里要改";
+            this.defList = msg;
+        });
     }
 }
 </script>
