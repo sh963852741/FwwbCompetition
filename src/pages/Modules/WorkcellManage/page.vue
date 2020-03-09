@@ -33,7 +33,7 @@
                         <i-row type="flex">
                             <i-col span="10">
                                 <i-form-item label="工作间位置">
-                                    <i-input v-model="workcellInfo.FixContainerNum"/>
+                                    <i-input v-model="workcellInfo.Location"/>
                                 </i-form-item>
                             </i-col>
                         </i-row>
@@ -56,13 +56,13 @@
                 </i-tab-pane>
                 <i-tab-pane label="工夹具管理" style="background-color: rgba(255, 255, 255, 0.75);">
                     <i-row>
-                        <i-col span="5"><Tree :data="fixtureTree" @on-select-change="test" :render="renderContent"></Tree></i-col>
+                        <i-col span="5"><Tree :data="fixtureTree" @on-select-change="selectTreeNode" :render="renderContent"></Tree></i-col>
                         <i-col span="18" offset="1">
                             <i-form>
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="6">
                                         <i-form-item label="夹具代码">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.Code"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="6">
@@ -128,7 +128,7 @@
                             <i-divider />
                             <i-input search enter-button placeholder="搜索夹具"/>
                             <br>
-                            <i-table :columns="fixtureTableCol"/>
+                            <i-table :columns="fixtureTableCol" :data="fixtures"/>
                         </i-col>
                     </i-row>
                 </i-tab-pane>
@@ -177,15 +177,19 @@
     </i-row>
 </template>
 <script>
+import fixtureManager from "../fixtureManager.js";
 import userForm from "./userForm";
 import fixDefForm from "./fixDefForm";
+import fixtureForm from "./fixtureForm";
+import tableCols from "./tableCols";
 const app = require("@/config");
 const echarts = require("echarts");
 const axios = require("axios");
 export default {
     components: {
         "user-form": userForm,
-        "fix-def-form": fixDefForm
+        "fix-def-form": fixDefForm,
+        "fixture-form": fixtureForm
     },
     data () {
         return {
@@ -196,39 +200,8 @@ export default {
                 backgroundSize: 'contain',
                 backgroundPosition: '100% 100%'
             },
-            userTableCol: [
-                {
-                    title: '姓名',
-                    key: 'Name'
-                }, {
-                    title: '工号',
-                    key: 'Code'
-                }, {
-                    title: '角色',
-                    key: 'Role'
-                }, {
-                    title: "操作",
-                    slot: 'Action'
-                }
-            ],
-            fixtureTableCol: [
-                {
-                    title: '夹具序列号',
-                    key: 'SeqID'
-                }, {
-                    title: '采购单据号',
-                    key: 'BillNo'
-                }, {
-                    title: '入库日期',
-                    key: 'RegDate'
-                }, {
-                    title: '已使用次数',
-                    key: 'UsedCount'
-                }, {
-                    title: '存放库位',
-                    key: 'Location'
-                }
-            ],
+            userTableCol: tableCols.userTableCol,
+            fixtureTableCol: tableCols.fixtureTableCol,
             userTable: [],
             fixtureTree: [
                 {
@@ -282,6 +255,8 @@ export default {
             modalTitle: '',
             workcellInfo: {},
             formData: {},
+            fixDefInfo: {},
+            fixtures: [],
             binData: [
                 {
                     name: '库位A1',
@@ -341,28 +316,7 @@ export default {
                     ]
                 }
             ],
-            binTableCol: [
-                {
-                    title: '夹具序列号',
-                    key: 'SeqID'
-                },
-                {
-                    title: '采购单据号',
-                    key: 'BillNo'
-                },
-                {
-                    title: '入库日期',
-                    key: 'RegDate'
-                },
-                {
-                    title: '已使用次数',
-                    key: 'UsedCount'
-                },
-                {
-                    title: '存放库位',
-                    key: 'binName'
-                }
-            ],
+            binTableCol: tableCols.binTableCol,
             bin1: {
                 backgroundColor: '#fff',
                 visualMap: {
@@ -535,7 +489,56 @@ export default {
                         }
                     ]
                 }
-            ]
+            ],
+            renderContent: (h, { root, node, data }) => {
+                return h('span', {
+                    style: {
+                        display: 'inline-block',
+                        width: '100%'
+                    }
+                }, [
+                    h('span', [
+                        h('Icon', {
+                            props: {
+                                type: 'ios-folder-outline'
+                            },
+                            style: {
+                                marginRight: '8px'
+                            }
+                        }),
+                        h('span', data.title)
+                    ]),
+                    h('span', {
+                        style: {
+                            display: 'flex',
+                            float: 'right',
+                            width: '64px'
+                        }
+                    }, [
+                        h('Button', {
+                            props: {
+                                size: 'small',
+                                icon: 'md-add',
+                                'v-show': data.isParent
+                            },
+                            on: {
+                                click: () => { this.addFixture(data) }
+                            }
+                        }),
+                        h('Button', {
+                            props: {
+                                size: 'small',
+                                icon: 'md-remove',
+                                'v-show': data.isParent,
+                                type: 'warning'
+                            },
+                            on: {
+                                click: () => { this.removeFixture(data) }
+                            }
+                        })
+                    ])
+                ]);
+            }
         }
     },
     mounted () {
@@ -562,9 +565,10 @@ export default {
         instance3.setOption(this.bin3);
     },
     methods: {
-        test (e) {
-            if (!e[0].children) {
-                alert("还没有夹具实体详细页");
+        async selectTreeNode (e) {
+            if (e[0].isParent) { // 如果是夹具定义
+                this.fixDefInfo = e[0];
+                this.fixtures = await fixtureManager.getFixtures(this.fixDefInfo.WorkcellId, this.fixDefInfo.ID);
             }
         },
         addFixDef (data) {
@@ -572,39 +576,32 @@ export default {
             this.modalTitle = "新增夹具定义";
             this.showModal = true;
         },
+        addFixture (data) {
+            this.bindingForm = "fixture-form";
+            this.modalTitle = "新增夹具实体";
+            this.formData.WorkcellID = this.workcellInfo.ID;
+            this.showModal = true;
+        },
         addUser () {
             this.bindingForm = "user-form";
             this.modalTitle = "新增用户";
             this.showModal = true;
         },
-        getWorkCellInfo (id) {
-            axios.post("/api/security/GetOrgDetail", {}, msg => {
-                this.workcellInfo = msg.data;
-            })
+        async getWorkCellInfo () {
+            this.workcellInfo = await fixtureManager.getWorkCellInfo();
         },
-        getFixDefs () {
-            axios.post("/api/fwwb/GetFixDefs", {departId: this.workcellInfo.ID}, msg => {
-                this.fixtureTree = msg.data;
-            })
+        async getFixDefs () {
+            this.fixtureTree = await fixtureManager.getFixDefs(this.workcellInfo.ID);
         },
-        saveWorkCell () {
-            axios.post("/api/security/SaveDepartV2", {...this.workcellInfo}, msg => {
-
-            })
+        async saveWorkCell () {
+            await fixtureManager.saveWorkCell(this.workcellInfo);
+        },
+        async removeFixture (data) {
+            await fixtureManager.removeFixture(data.ID);
         },
         submit () {
             let form = this.$refs["form"];
             form.submit(this.workcellInfo.ID, () => {});
-        },
-        renderContent (h, { root, node, data }) {
-            return (
-                <span>
-                    <span>
-                        { data.title }
-                    </span>
-                    <button v-show ={data.isParent !== undefined} class="button ivu-btn ivu-btn-small ivu-btn-icon-only" onClick={ () => { this.append(data); } }><icon type='ios-add'/></button>
-                </span>
-                );
         }
     }
 }
@@ -621,10 +618,6 @@ export default {
     color:#808695;
 }
 .ivu-tree-title{
-        width: 100%;
-}
-.button{
-    float: right;
-    margin-right:18px;
+    width: 100%;
 }
 </style>

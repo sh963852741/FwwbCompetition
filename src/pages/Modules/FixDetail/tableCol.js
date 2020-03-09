@@ -21,16 +21,17 @@ let tableCol = {
             key: "UsedCount"
         },
         {
-            title: '存放位置',
-            key: 'Location'
-        },
-        {
             title: '生产日期',
             key: 'ManufacDate'
         },
         {
             title: '经办人',
             key: 'Owner'
+        },
+        {
+            title: '操作',
+            width: 200,
+            slot: 'Action'
         }
     ]
 };
