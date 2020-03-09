@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import fixtureManager from "../fixtureManager.js";
 const axios = require("axios");
 const app = require("@/config");
 export default {
@@ -105,10 +106,8 @@ export default {
         dealWorkflow (instanceId, stepId) {
             window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
         },
-        getWorkCellInfo (id) {
-            axios.post(" /api/security/GetOrgDetail", {}, msg => {
-                this.workcellInfo = msg.data;
-            })
+        async getWorkCellInfo () {
+            this.workcellInfo = await fixtureManager.getWorkCellInfo();
         }
     },
     mounted () {

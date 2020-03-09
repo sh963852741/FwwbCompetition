@@ -60,7 +60,8 @@
     </i-row>
 </template>
 <script>
-let axios = require("axios");
+import fixtureManager from "../fixtureManager.js";
+// const axios = require("axios");
 export default {
     props: {
         formData: {
@@ -72,15 +73,10 @@ export default {
         return {}
     },
     methods: {
-        submit (WorkcellId, callback) {
-            axios.post("/api/fwwb/SaveFixDef", {WorkcellId, ...this.formData}, msg => {
-                this.resetFields();
-                if (msg.success) {
-                    callback();
-                } else {
-                    this.$Message.warning(msg.msg);
-                }
-            });
+        async submit (WorkcellId, callback) {
+            let res = await fixtureManager.saveFixDef({...this.formData, WorkcellId});
+            if (res.success) callback();
+            else this.$Message.warning(res.msg);
         }
     }
 }
