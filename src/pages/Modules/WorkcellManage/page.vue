@@ -33,7 +33,7 @@
                         <i-row type="flex">
                             <i-col span="10">
                                 <i-form-item label="工作间位置">
-                                    <i-input v-model="workcellInfo.FixContainerNum"/>
+                                    <i-input v-model="workcellInfo.Location"/>
                                 </i-form-item>
                             </i-col>
                         </i-row>
@@ -177,9 +177,11 @@
     </i-row>
 </template>
 <script>
+import fixtureManager from "../fixtureManager.js";
 import userForm from "./userForm";
 import fixDefForm from "./fixDefForm";
 import fixtureForm from "./fixtureForm";
+import tableCols from "./tableCols";
 const app = require("@/config");
 const echarts = require("echarts");
 const axios = require("axios");
@@ -198,39 +200,8 @@ export default {
                 backgroundSize: 'contain',
                 backgroundPosition: '100% 100%'
             },
-            userTableCol: [
-                {
-                    title: '姓名',
-                    key: 'Name'
-                }, {
-                    title: '工号',
-                    key: 'Code'
-                }, {
-                    title: '角色',
-                    key: 'Role'
-                }, {
-                    title: "操作",
-                    slot: 'Action'
-                }
-            ],
-            fixtureTableCol: [
-                {
-                    title: '夹具序列号',
-                    key: 'SeqID'
-                }, {
-                    title: '采购单据号',
-                    key: 'BillNo'
-                }, {
-                    title: '入库日期',
-                    key: 'RegDate'
-                }, {
-                    title: '已使用次数',
-                    key: 'UsedCount'
-                }, {
-                    title: '存放库位',
-                    key: 'Location'
-                }
-            ],
+            userTableCol: tableCols.userTableCol,
+            fixtureTableCol: tableCols.fixtureTableCol,
             userTable: [],
             fixtureTree: [
                 {
@@ -345,28 +316,7 @@ export default {
                     ]
                 }
             ],
-            binTableCol: [
-                {
-                    title: '夹具序列号',
-                    key: 'SeqID'
-                },
-                {
-                    title: '采购单据号',
-                    key: 'BillNo'
-                },
-                {
-                    title: '入库日期',
-                    key: 'RegDate'
-                },
-                {
-                    title: '已使用次数',
-                    key: 'UsedCount'
-                },
-                {
-                    title: '存放库位',
-                    key: 'binName'
-                }
-            ],
+            binTableCol: tableCols.binTableCol,
             bin1: {
                 backgroundColor: '#fff',
                 visualMap: {
@@ -615,12 +565,10 @@ export default {
         instance3.setOption(this.bin3);
     },
     methods: {
-        selectTreeNode (e) {
+        async selectTreeNode (e) {
             if (e[0].isParent) { // 如果是夹具定义
                 this.fixDefInfo = e[0];
-                axios.post("/api/fwwb/GetFixs", {defId: this.fixDefInfo.ID, WorkcellID: this.fixDefInfo.WorkcellId}, msg => {
-                    this.fixtures = msg.data;
-                })
+                this.fixtures = await fixtureManager.getFixtures(this.fixDefInfo.WorkcellId, this.fixDefInfo.ID);
             }
         },
         addFixDef (data) {
@@ -639,25 +587,17 @@ export default {
             this.modalTitle = "新增用户";
             this.showModal = true;
         },
-        getWorkCellInfo (id) {
-            axios.post("/api/security/GetOrgDetail", {}, msg => {
-                this.workcellInfo = msg.data;
-            })
+        async getWorkCellInfo () {
+            this.workcellInfo = await fixtureManager.getWorkCellInfo();
         },
-        getFixDefs () {
-            axios.post("/api/fwwb/GetFixDefs", {departId: this.workcellInfo.ID}, msg => {
-                this.fixtureTree = msg.data;
-            })
+        async getFixDefs () {
+            this.fixtureTree = await fixtureManager.getFixDefs(this.workcellInfo.ID);
         },
-        saveWorkCell () {
-            axios.post("/api/security/SaveDepartV2", {...this.workcellInfo}, msg => {
-
-            })
+        async saveWorkCell () {
+            await fixtureManager.saveWorkCell(this.workcellInfo);
         },
-        removeFixture (data) {
-            axios.post("/api/fwwb/RemoveFixDefs", {id: data.ID}, msg => {
-
-            })
+        async removeFixture (data) {
+            await fixtureManager.removeFixture(data.ID);
         },
         submit () {
             let form = this.$refs["form"];

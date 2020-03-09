@@ -41,8 +41,8 @@
     </i-row>
 </template>
 <script>
-import getFixDefs from "./fixDefList.js";
-const axios = require("axios");
+import fixtureManager from "../fixtureManager.js";
+// const axios = require("axios");
 export default {
     props: {
         formData: {
@@ -56,23 +56,15 @@ export default {
         }
     },
     methods: {
-        submit (WorkcellId, callback) {
-            axios.post("/api/fwwb/SaveFix", {...this.formData}, msg => {
-                this.resetFields();
-                if (msg.success) {
-                    callback();
-                } else {
-                    this.$Message.warning(msg.msg);
-                }
-            });
+        async submit (WorkcellId, callback) {
+            let res = await fixtureManager.saveFixture({...this.formData, DefId: this.formData.DefId[1]});
+            if (res.success) callback();
+            else this.$Message.warning(res.msg);
+            // this.resetFields();
         }
     },
-    mounted () {
-        let defListPromise = getFixDefs(this.formData.WorkcellID);
-        defListPromise.then(msg => {
-            msg[0].lable = "这里要改";
-            this.defList = msg;
-        });
+    async mounted () {
+        this.defList = await fixtureManager.getFixDefTree(this.formData.WorkcellID);
     }
 }
 </script>
