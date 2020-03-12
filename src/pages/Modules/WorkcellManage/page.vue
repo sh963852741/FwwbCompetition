@@ -67,46 +67,46 @@
                                     </i-col>
                                     <i-col span="6">
                                         <i-form-item label="夹具名称">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.Name"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="6">
                                         <i-form-item label="所属大类">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.Family"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="6">
                                         <i-form-item label="夹具模组">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.Model"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="6">
                                         <i-form-item label="夹具料号">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.PartNo"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="6">
                                         <i-form-item label="配备的数量">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.Upl"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
                                 <i-row type="flex" justify="space-between">
                                     <i-col span="6">
                                         <i-form-item label="用途">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.UsedFor"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="6">
                                         <i-form-item label="保养点检周期">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.PMPeriod"/>
                                         </i-form-item>
                                     </i-col>
                                     <i-col span="6">
                                         <i-form-item label="责任人">
-                                            <i-input/>
+                                            <i-input v-model="fixDefInfo.Owner"/>
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
@@ -122,17 +122,22 @@
                                         </i-form-item>
                                     </i-col>
                                 </i-row>
-                                <i-button type="primary">保存</i-button>
+                                <i-button type="primary" @click="saveFixDef()">保存</i-button>
                                 <i-button type="text">修改记录</i-button>
                             </i-form>
                             <i-divider />
                             <i-input search enter-button placeholder="搜索夹具"/>
                             <br>
-                            <i-table :columns="fixtureTableCol" :data="fixtures"/>
+                            <i-table :columns="fixtureTableCol" :data="fixtures">
+                                <template slot="Action" slot-scope="{row}">
+                                    <i-button @click="toDetail(row)">修改</i-button>
+                                    <i-button @click="removeFix(row)" type="warning">删除</i-button>
+                                </template>
+                            </i-table>
                         </i-col>
                     </i-row>
                 </i-tab-pane>
-                <i-tab-pane label="夹具柜" style="background-color: rgba(255, 255, 255, 0.75);">
+                <!-- <i-tab-pane label="夹具柜" style="background-color: rgba(255, 255, 255, 0.75);">
                     <i-row>
                         <i-col span="4">
                             <Tree :data="fixs"></Tree>
@@ -160,7 +165,7 @@
                             </Collapse>
                         </i-col>
                     </i-row>
-                </i-tab-pane>
+                </i-tab-pane> -->
                 <i-tab-pane label="用户管理" style="background-color: rgba(255, 255, 255, 0.75);">
                     <i-row type="flex" :gutter="16">
                         <i-col><i-button type="primary" @click="addUser()">添加成员</i-button></i-col>
@@ -183,7 +188,7 @@ import fixDefForm from "./fixDefForm";
 import fixtureForm from "./fixtureForm";
 import tableCols from "./tableCols";
 const app = require("@/config");
-const echarts = require("echarts");
+// const echarts = require("echarts");
 const axios = require("axios");
 export default {
     components: {
@@ -257,239 +262,6 @@ export default {
             formData: {},
             fixDefInfo: {},
             fixtures: [],
-            binData: [
-                {
-                    name: '库位A1',
-                    fix: [
-                        {
-                            SeqID: '1',
-                            BillNo: 'BO19070500000002',
-                            RegDate: '2019/7/5 16:42:43',
-                            UsedCount: '3',
-                            binName: '库位A1'
-                        },
-                        {
-                            SeqID: '1',
-                            BillNo: 'BO19070500000002',
-                            RegDate: '2019/7/5 16:42:43',
-                            UsedCount: '3',
-                            binName: '库位A1'
-                        }
-                    ]
-                },
-                {
-                    name: '库位A2',
-                    fix: [
-                        {
-                            SeqID: '1',
-                            BillNo: 'BO19070500000002',
-                            RegDate: '2019/7/5 16:42:43',
-                            UsedCount: '3',
-                            binName: '库位A2'
-                        },
-                        {
-                            SeqID: '1',
-                            BillNo: 'BO19070500000002',
-                            RegDate: '2019/7/5 16:42:43',
-                            UsedCount: '3',
-                            binName: '库位A2'
-                        }
-                    ]
-                },
-                {
-                    name: '库位A3',
-                    fix: [
-                        {
-                            SeqID: '1',
-                            BillNo: 'BO19070500000002',
-                            RegDate: '2019/7/5 16:42:43',
-                            UsedCount: '3',
-                            binName: '库位A3'
-                        },
-                        {
-                            SeqID: '1',
-                            BillNo: 'BO19070500000002',
-                            RegDate: '2019/7/5 16:42:43',
-                            UsedCount: '3',
-                            binName: '库位A3'
-                        }
-                    ]
-                }
-            ],
-            binTableCol: tableCols.binTableCol,
-            bin1: {
-                backgroundColor: '#fff',
-                visualMap: {
-                    show: false,
-                    min: 80,
-                    max: 600,
-                    inRange: {
-                        colorLightness: [0, 1]
-                    }
-                },
-                title: {
-                        text: '工夹具使用情况',
-                        left: '50%',
-                        top: '5%',
-                        textAlign: 'center',
-                        textStyle: {
-                            color: '#515A6E',
-                            fontSize: '20',
-                            fontWeight: 'bolder'
-                        }
-                },
-                series: [
-                    {
-                        type: 'pie',
-                        radius: '55%',
-                        center: ['50%', '50%'],
-                        data: [
-                            {value: 290, name: '维修次数'},
-                            {value: 260, name: '借用次数'},
-                            {value: 220, name: '返还日期'},
-                            {value: 320, name: '入库日期'}
-                        ].sort(function (a, b) { return a.value - b.value; }),
-                        roseType: 'radius',
-                        itemStyle: {
-                            color: '#c23531'
-                        },
-                        label: {
-                                    position: 'outer',
-                                    fontSize: '15'
-                        },
-                        left: 0,
-                        right: '0',
-                        top: 0,
-                        bottom: 0
-                    }
-                ]
-            },
-            bin2: {
-                backgroundColor: '#fff',
-                visualMap: {
-                    show: false,
-                    min: 80,
-                    max: 600,
-                    inRange: {
-                        colorLightness: [0, 1]
-                    }
-                },
-                title: {
-                        text: '工夹具使用情况',
-                        left: '50%',
-                        top: '5%',
-                        textAlign: 'center',
-                        textStyle: {
-                            color: '#515A6E',
-                            fontSize: '20',
-                            fontWeight: 'bolder'
-                        }
-                },
-                series: [
-                    {
-                        type: 'pie',
-                        radius: '55%',
-                        center: ['50%', '50%'],
-                        data: [
-                            {value: 290, name: '维修次数'},
-                            {value: 260, name: '借用次数'},
-                            {value: 220, name: '返还日期'},
-                            {value: 320, name: '入库日期'}
-                        ].sort(function (a, b) { return a.value - b.value; }),
-                        roseType: 'radius',
-                        itemStyle: {
-                            color: '#c23531'
-                        },
-                        label: {
-                                    position: 'outer',
-                                    fontSize: '15'
-                        },
-                        left: 0,
-                        right: '0',
-                        top: 0,
-                        bottom: 0
-                    }
-                ]
-            },
-            bin3: {
-                backgroundColor: '#fff',
-                visualMap: {
-                    show: false,
-                    min: 80,
-                    max: 600,
-                    inRange: {
-                        colorLightness: [0, 1]
-                    }
-                },
-                title: {
-                        text: '工夹具使用情况',
-                        left: '50%',
-                        top: '5%',
-                        textAlign: 'center',
-                        textStyle: {
-                            color: '#515A6E',
-                            fontSize: '20',
-                            fontWeight: 'bolder'
-                        }
-                },
-                series: [
-                    {
-                        type: 'pie',
-                        radius: '55%',
-                        center: ['50%', '50%'],
-                        data: [
-                            {value: 290, name: '维修次数'},
-                            {value: 260, name: '借用次数'},
-                            {value: 220, name: '返还日期'},
-                            {value: 320, name: '入库日期'}
-                        ].sort(function (a, b) { return a.value - b.value; }),
-                        roseType: 'radius',
-                        itemStyle: {
-                            color: '#c23531'
-                        },
-                        label: {
-                                    position: 'outer',
-                                    fontSize: '15'
-                        },
-                        left: 0,
-                        right: '0',
-                        top: 0,
-                        bottom: 0
-                    }
-                ]
-            },
-            fixs: [
-                {
-                    title: 'JW005工作间',
-                    expand: true,
-                    children: [
-                        {
-                            title: '夹具柜01',
-                            children: [
-                                {
-                                    title: 'bin位'
-                                }
-                            ]
-                        },
-                        {
-                            title: '夹具柜01',
-                            children: [
-                                {
-                                    title: 'bin位'
-                                }
-                            ]
-                        },
-                        {
-                            title: '夹具柜01',
-                            children: [
-                                {
-                                    title: 'bin位'
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
             renderContent: (h, { root, node, data }) => {
                 return h('span', {
                     style: {
@@ -533,7 +305,7 @@ export default {
                                 type: 'warning'
                             },
                             on: {
-                                click: () => { this.removeFixture(data) }
+                                click: () => { this.removeFixDef(data) }
                             }
                         })
                     ])
@@ -554,15 +326,15 @@ export default {
                 }
             })
         });
-        let ele = document.getElementById("bin1");
-        let instance = echarts.init(ele);
-        instance.setOption(this.bin1);
-        let ele2 = document.getElementById("bin2");
-        let instance2 = echarts.init(ele2);
-        instance2.setOption(this.bin2);
-        let ele3 = document.getElementById("bin3");
-        let instance3 = echarts.init(ele3);
-        instance3.setOption(this.bin3);
+        // let ele = document.getElementById("bin1");
+        // let instance = echarts.init(ele);
+        // instance.setOption(this.bin1);
+        // let ele2 = document.getElementById("bin2");
+        // let instance2 = echarts.init(ele2);
+        // instance2.setOption(this.bin2);
+        // let ele3 = document.getElementById("bin3");
+        // let instance3 = echarts.init(ele3);
+        // instance3.setOption(this.bin3);
     },
     methods: {
         async selectTreeNode (e) {
@@ -596,8 +368,23 @@ export default {
         async saveWorkCell () {
             await fixtureManager.saveWorkCell(this.workcellInfo);
         },
+        async removeFixDef (data) {
+            await fixtureManager.removeFixDef(this.workcellInfo.ID, data.ID);
+        },
+        toDetail (data) {
+            this.$router.push({name: 'FixDetail', query: {EntityID: data.ID, WorkcellID: this.workcellInfo.ID}});
+        },
         async removeFixture (data) {
-            await fixtureManager.removeFixture(data.ID);
+            let res = await fixtureManager.removeFixture(data.ID);
+            if (res.success) {
+                this.$Message.success('已删除');
+            }
+        },
+        async saveFixDef () {
+            let res = await fixtureManager.saveFixDef(this.fixDefInfo);
+            if (res.success) {
+                this.$Message.success('保存成功');
+            }
         },
         submit () {
             let form = this.$refs["form"];

@@ -52,6 +52,9 @@ let tableCols = {
         }, {
             title: '存放库位',
             key: 'Location'
+        }, {
+            title: '操作',
+            slot: 'Action'
         }
     ]
 }
