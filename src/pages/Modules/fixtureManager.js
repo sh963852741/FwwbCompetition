@@ -21,8 +21,8 @@ let fixtureManager = {
         let res = await axios.post("/api/security/SaveDepartV2", {...WorkcellInfo});
         return res.data.success;
     },
-    async removeFixture (fixtureID) {
-        let res = await axios.post("/api/fwwb/RemoveFixDefs", {id: fixtureID});
+    async removeFixDef (WorkcellID, fixtureID) {
+        let res = await axios.post("/api/fwwb/RemoveFixDefs", {WorkcellID, ID: fixtureID});
         return res.data;
     },
     async saveFixture (fixtureInfo) {
@@ -40,6 +40,10 @@ let fixtureManager = {
     async getFixtures (WorkcellID, defId) {
         let fixtures = await axios.post("/api/fwwb/GetFixs", {WorkcellID, defId});
         return fixtures.data.data;
+    },
+    async removeFixture (id) {
+        let res = await axios.post("/api/fwwb/RemoveFix", {id});
+        return res.data;
     }
 };
 export default fixtureManager;
