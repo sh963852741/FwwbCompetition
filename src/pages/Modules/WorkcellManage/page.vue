@@ -282,7 +282,7 @@ export default {
                     ]),
                     h('span', {
                         style: {
-                            display: 'flex',
+                            display: data.isParent !== undefined ? 'flex' : 'none',
                             float: 'right',
                             width: '64px'
                         }
@@ -290,8 +290,7 @@ export default {
                         h('Button', {
                             props: {
                                 size: 'small',
-                                icon: 'md-add',
-                                'v-show': data.isParent
+                                icon: 'md-add'
                             },
                             on: {
                                 click: () => { this.addFixture(data) }
@@ -301,7 +300,6 @@ export default {
                             props: {
                                 size: 'small',
                                 icon: 'md-remove',
-                                'v-show': data.isParent,
                                 type: 'warning'
                             },
                             on: {
@@ -320,9 +318,14 @@ export default {
             axios.post("/api/fwwb/GetFixDefs", {departId: this.workcellInfo.ID}, msg => {
                 this.fixtureTree[0].children = msg.data;
                 let i = 0;
+                let j = 0;
                 for (i = 0; i < this.fixtureTree[0].children.length; i++) {
                     this.$set(this.fixtureTree[0].children[i], 'title', this.fixtureTree[0].children[i].Name);
+                    this.$set(this.fixtureTree[0].children[i], 'children', this.fixtureTree[0].children[i].Entities);
                     this.$set(this.fixtureTree[0].children[i], 'isParent', true);
+                    for (j = 0; j < this.fixtureTree[0].children[i].Entities.length; j++) {
+                         this.$set(this.fixtureTree[0].children[i].Entities[j], 'title', this.fixtureTree[0].children[i].Entities[j].Code);
+                     }
                 }
             })
         });
@@ -341,6 +344,8 @@ export default {
             if (e[0].isParent) { // 如果是夹具定义
                 this.fixDefInfo = e[0];
                 this.fixtures = await fixtureManager.getFixtures(this.fixDefInfo.WorkcellId, this.fixDefInfo.ID);
+            } else {
+                this.toDetail(e[0]);
             }
         },
         addFixDef (data) {
@@ -389,6 +394,9 @@ export default {
         submit () {
             let form = this.$refs["form"];
             form.submit(this.workcellInfo.ID, () => {});
+        },
+        toDetail (data) {
+            this.$router.push({name: 'FixDetail', query: {id: data.ID}});
         }
     }
 }
