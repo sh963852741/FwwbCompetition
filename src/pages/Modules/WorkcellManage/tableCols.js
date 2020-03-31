@@ -24,13 +24,13 @@ let tableCols = {
     userTableCol: [
         {
             title: '姓名',
-            key: 'Name'
+            key: 'RealName'
         }, {
             title: '工号',
             key: 'Code'
         }, {
             title: '角色',
-            key: 'Role'
+            slot: 'Role'
         }, {
             title: "操作",
             slot: 'Action'
