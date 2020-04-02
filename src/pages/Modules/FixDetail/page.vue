@@ -296,7 +296,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .title {
     font-size: 20px;
     color: #17233d;
