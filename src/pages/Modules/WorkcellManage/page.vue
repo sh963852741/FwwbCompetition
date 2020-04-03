@@ -172,7 +172,20 @@
                         <i-col><i-input search enter-button placeholder="搜索成员"/></i-col>
                     </i-row>
                     <br/>
-                    <i-table :columns="userTableCol" :data="userTable"/>
+                    <i-table :columns="userTableCol" :data="userTable">
+                        <template slot="Role" slot-scope="{row}">
+                            <i-select transfer v-model="row.position" @on-change="setPositon(row, $event)">
+                                <i-option value="Operator I" :key="3">Operator I</i-option>
+                                <i-option value="Operator II" :key="4">Operator II</i-option>
+                                <i-option value="Supervisor" :key="1">Supervisor</i-option>
+                                <i-option value="Manager" :key="2">Manager</i-option>
+                                <i-option value="Admin" :key="5">Admin</i-option>
+                            </i-select>
+                        </template>
+                        <template slot="Action" slot-scope="{row}">
+                            <i-button @click="delUser(row)" type="warning">移除</i-button>
+                        </template>
+                    </i-table>
                 </i-tab-pane>
             </i-tabs>
         </i-card>
@@ -262,6 +275,7 @@ export default {
             formData: {},
             fixDefInfo: {},
             fixtures: [],
+            callbackFunc: () => {},
             renderContent: (h, { root, node, data }) => {
                 return h('span', {
                     style: {
@@ -327,7 +341,8 @@ export default {
                          this.$set(this.fixtureTree[0].children[i].Entities[j], 'title', this.fixtureTree[0].children[i].Entities[j].Code);
                      }
                 }
-            })
+            });
+            this.getUserTable();
         });
         // let ele = document.getElementById("bin1");
         // let instance = echarts.init(ele);
@@ -362,7 +377,16 @@ export default {
         addUser () {
             this.bindingForm = "user-form";
             this.modalTitle = "新增用户";
+            this.callbackFunc = this.getUserTable;
             this.showModal = true;
+        },
+        delUser (userData) {
+            axios.post("/api/security/RemoveUser", {userId: userData.ID, departId: this.workcellInfo.ID}, msg => {
+                if (msg.success) {
+                    this.$Message.success('已删除');
+                }
+                this.getUserTable();
+            });
         },
         async getWorkCellInfo () {
             this.workcellInfo = await fixtureManager.getWorkCellInfo();
@@ -390,10 +414,20 @@ export default {
         },
         submit () {
             let form = this.$refs["form"];
-            form.submit(this.workcellInfo.ID, () => {});
+            form.submit(this.workcellInfo.ID, this.callbackFunc);
         },
         toDetail (data) {
-            this.$router.push({name: 'FixDetail', query: {EntityID: data.ID}});
+            if (data.nodeKey !== 0) this.$router.push({name: 'FixDetail', query: {EntityID: data.ID}});
+        },
+        getUserTable () {
+            axios.post("/api/security/GetUsers", {departId: this.workcellInfo.ID}, msg => {
+                this.userTable = msg.data;
+            });
+        },
+        setPositon (userInfo, position) {
+            axios.post("/api/security/SetPositionByUser", {departId: this.workcellInfo.ID, userId: userInfo.ID, position}, msg => {
+                this.$Message.success('职位已更新');
+            });
         }
     }
 }
