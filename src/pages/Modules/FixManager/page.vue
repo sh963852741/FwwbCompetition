@@ -57,40 +57,45 @@ export default {
                 height: '100%'
             },
             message: [],
-            workcellInfo: {},
+            workcellInfo: {
+                WorkCellID: ''
+            },
             functionArray: [
                 {
                     title: "出库申请",
                     routerTo: {
-                        name: "WorkflowConfig"
+                        name: "IOPutForm"
                     },
                     icon: "ios-cloud-download"
                 },
                 {
                     title: "入库申请",
                     routerTo: {
-                        name: "WorkflowConfig"
+                        name: "IOPutForm"
                     },
                     icon: "ios-cloud-upload"
                 },
                 {
                     title: "采购入库申请",
                     routerTo: {
-                        name: "WorkflowConfig"
+                        name: "PurchaseForm",
+                        params: {
+                            workCellID: ''
+                        }
                     },
                     icon: "ios-cart"
                 },
                 {
                     title: "报修申请",
                     routerTo: {
-                        name: "WorkflowConfig"
+                        name: "MaintainForm"
                     },
                     icon: "md-hammer"
                 },
                 {
                     title: "报废申请",
                     routerTo: {
-                        name: "WorkflowConfig"
+                        name: "ScrapForm"
                     },
                     icon: "md-trash"
                 }
@@ -108,11 +113,13 @@ export default {
         },
         async getWorkCellInfo () {
             this.workcellInfo = await fixtureManager.getWorkCellInfo();
+            this.functionArray[2].routerTo.params.WorkCellID = this.workcellInfo.ID;
+            console.log("hello", this.functionArray[2].routerTo.params.WorkCellID);
         }
     },
     mounted () {
         app.title = "工作间管理";
-        this.getWorkCellInfo()
+        this.getWorkCellInfo();
         this.getPending();
     }
 }

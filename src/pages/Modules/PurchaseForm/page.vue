@@ -57,8 +57,21 @@
 </template>
 
 <script>
+const axios = require("axios");
 export default {
+    data () {
+        return {
+            io: ''
+        }
+    },
+    method: {
 
+    },
+    mounted () {
+        axios.post("/api/fwwb/RegInApplicate", {ID: "7c19253d-7aa3-4b79-8d07-2958c46fc684"}, msg => {
+            console.log("haha");
+        })
+    }
 }
 </script>
 
