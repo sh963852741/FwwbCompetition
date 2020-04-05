@@ -19,7 +19,7 @@
         <i-row>
             <i-col span="4" class="message-zone" offset="1">
                 <template v-for="(item, index) in message">
-                    <i-row style="margin-top: 15px" :key="index">
+                    <i-row style="margin-top: 15px" :key="index" v-if="index<5">
                         <a href="/manage/wwf/config">
                             <i-col span="1" style="margin-left: 30px">
                                 <Icon size="24" style="float: right;" type="ios-pricetag" />
@@ -79,9 +79,7 @@ export default {
                     title: "采购入库申请",
                     routerTo: {
                         name: "PurchaseForm",
-                        params: {
-                            workCellID: ''
-                        }
+                        query: {}
                     },
                     icon: "ios-cart"
                 },
@@ -113,8 +111,7 @@ export default {
         },
         async getWorkCellInfo () {
             this.workcellInfo = await fixtureManager.getWorkCellInfo();
-            this.functionArray[2].routerTo.params.WorkCellID = this.workcellInfo.ID;
-            console.log("hello", this.functionArray[2].routerTo.params.WorkCellID);
+            this.functionArray[2].routerTo.query.WorkCellID = this.workcellInfo.ID;
         }
     },
     mounted () {
@@ -154,6 +151,7 @@ export default {
         height: 280px;
         background-color: #d1f0f0;
         opacity: 0.75;
+        overflow: hidden;
     }
     .my-button{
         margin-right: 60px;
