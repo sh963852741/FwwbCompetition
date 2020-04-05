@@ -3,11 +3,14 @@
         <div class="paper">
             <div class="blankPage"></div>
             <p class="headLine">采购入库申请表</p>
-            <p class="date">填表时间：0000年00月00日</p>
+            <p class="date">填表时间：{{nowDate}}</p>
             <table border="1">
                 <tr>
                     <td class="cellFirst">申请人</td>
-                    <td class="cellSecond">初级用户</td>
+                    <td class="cellSecond">
+                        <i-input  v-if="io.fieldAccess.applicant === 'w' && io.isMyStep" v-model="io.data.applicant"/>
+                        <p v-else>{{io.data.applicant}}</p>
+                    </td>
                 </tr>
                 <tr>
                     <td class="cellFirst">采购入库单据号</td>
@@ -61,15 +64,37 @@ const axios = require("axios");
 export default {
     data () {
         return {
-            io: ''
+            nowDate: '',
+            io: {
+                fieldAccess: {
+                    applicant: 'w'
+                },
+                data: {
+                    applicant: ''
+                },
+                submitBtns: [],
+                shouldUpload: [],
+                allSteps: [],
+                isMyStep: true,
+                timelines: [],
+                intstanceState: '',
+                currentStep: ''
+            },
+            workCellID: ''
         }
     },
     method: {
 
     },
     mounted () {
-        axios.post("/api/fwwb/RegInApplicate", {ID: "7c19253d-7aa3-4b79-8d07-2958c46fc684"}, msg => {
-            console.log("haha");
+        this.workCellID = this.$route.query.WorkCellID;
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        this.nowDate = `${year}年${month}月${day}日`; // 显示在最上方的填写日期
+        axios.post("/api/fwwb/RegInApplicate", {ID: this.workCellID}, msg => {
+            console.log("...");
         })
     }
 }
