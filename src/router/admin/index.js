@@ -18,5 +18,10 @@ module.exports = {
         path: "/manage/fixdetail",
         layout: "admin",
         component: () => import(/* webpackChunkName: "FixManager" */"@p/Modules/FixDetail")
+    },
+    DiscardApplication: {
+        path: "/manage/dashboard/discard",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "FixManager" */"@p/Modules/FixManager/discardApplication.vue")
     }
 };

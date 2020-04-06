@@ -20,7 +20,7 @@
             <i-col span="4" class="message-zone" offset="1">
                 <template v-for="(item, index) in message">
                     <i-row style="margin-top: 15px" :key="index">
-                        <a href="/manage/wwf/config">
+                        <a :href="['/manage/dashboard/discard?instanceId=' + item.InstanceId + '&stepId=' + item.StepId]">
                             <i-col span="1" style="margin-left: 30px">
                                 <Icon size="24" style="float: right;" type="ios-pricetag" />
                             </i-col>
@@ -33,9 +33,11 @@
         <i-row>
             <i-col span="2" style="height: 1px;margin-right: 5px"></i-col>
             <i-col span="2" v-for="(item,index) in functionArray" class="my-button" :key="index">
-                <i-card style="color: white;" class="layout-con" :to="item.routerTo">
-                    <i-icon size="30" style="display: block" class="margin" :type="item.icon" />{{item.title}}
-                </i-card>
+                <a @click="routerTo(item.routerTo)">
+                    <i-card style="color: white;" class="layout-con">
+                        <i-icon size="30" style="display: block" class="margin" :type="item.icon"/>{{item.title}}
+                    </i-card>
+                </a>
             </i-col>
         </i-row>
     </i-card>
@@ -57,6 +59,7 @@ export default {
                 height: '100%'
             },
             message: [],
+            ID: "",
             workcellInfo: {},
             functionArray: [
                 {
@@ -90,7 +93,12 @@ export default {
                 {
                     title: "报废申请",
                     routerTo: {
-                        name: "WorkflowConfig"
+                        name: "DiscardApplication",
+                        query: {
+                            instanceId: this.ID,
+                            stepId: this.ID,
+                            workcellID: this.ID
+                        }
                     },
                     icon: "md-trash"
                 }
@@ -106,8 +114,29 @@ export default {
         dealWorkflow (instanceId, stepId) {
             window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
         },
+        routerTo (router) {
+            if (router.name === 'DiscardApplication') {
+               axios.post("/api/fwwb/DiscardApplicate", {id: this.ID}, msg => {
+                    if (msg.success) {
+                        this.functionArray[4].routerTo.query.instanceId = msg.instanceId;
+                        this.functionArray[4].routerTo.query.stepID = msg.stepId;
+                        this.$router.push(router);
+                    } else {
+                        this.$Message.warning(msg.msg);
+                    }
+                })
+            } else {
+                this.$router.push(router);
+            }
+        },
         async getWorkCellInfo () {
-            this.workcellInfo = await fixtureManager.getWorkCellInfo();
+            this.workcellInfo = await fixtureManager.getWorkCellInfo().then((res) => {
+                this.$nextTick(() => {
+                    console.log(res);
+                    this.ID = res.ID;
+                    this.functionArray[4].routerTo.query.workcellID = res.ID;
+                })
+            })
         }
     },
     mounted () {
