@@ -2,7 +2,7 @@
     <div>
          <div class="paper">
             <div class="blankPage"></div>
-            <p class="headLine">维修申请表</p>
+            <p class="headLine">报修申请表</p>
             <p class="date">填表时间：0000年00月00日</p>
             <table border="1">
                 <tr>
