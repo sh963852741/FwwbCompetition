@@ -35,9 +35,11 @@
         <i-row>
             <i-col span="2" style="height: 1px;margin-right: 5px"></i-col>
             <i-col span="2" v-for="(item,index) in functionArray" class="my-button" :key="index">
-                <i-card style="color: white;" class="layout-con" :to="item.routerTo">
-                    <i-icon size="30" style="display: block" class="margin" :type="item.icon" />{{item.title}}
-                </i-card>
+                <a @click="routerTo(item.routerTo)">
+                    <i-card style="color: white;" class="layout-con">
+                        <i-icon size="30" style="display: block" class="margin" :type="item.icon"/>{{item.title}}
+                    </i-card>
+                </a>
             </i-col>
         </i-row>
     </i-card>
@@ -113,6 +115,24 @@ export default {
                 this.message = msg.data;
                 this.messageNum = msg.totalRow;
             })
+        },
+        dealWorkflow (instanceId, stepId) {
+            window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
+        },
+        routerTo (router) {
+            if (router.name === 'DiscardApplication') {
+               axios.post("/api/fwwb/DiscardApplicate", {id: this.ID}, msg => {
+                    if (msg.success) {
+                        this.functionArray[4].routerTo.query.instanceId = msg.instanceId;
+                        this.functionArray[4].routerTo.query.stepID = msg.stepId;
+                        this.$router.push(router);
+                    } else {
+                        this.$Message.warning(msg.msg);
+                    }
+                })
+            } else {
+                this.$router.push(router);
+            }
         },
         async getWorkCellInfo () {
             this.workcellInfo = await fixtureManager.getWorkCellInfo();
