@@ -400,9 +400,6 @@ export default {
         async removeFixDef (data) {
             await fixtureManager.removeFixDef(this.workcellInfo.ID, data.ID);
         },
-        // toDetail (data) {
-        //     this.$router.push({name: 'FixDetail', query: {EntityID: data.ID, WorkcellID: this.workcellInfo.ID}});
-        // },
         async removeFixture (data) {
             let res = await fixtureManager.removeFixture(data.ID);
             if (res.success) {

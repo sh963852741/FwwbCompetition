@@ -17,11 +17,26 @@ module.exports = {
     FixDetail: {
         path: "/manage/fixdetail",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "FixManager" */"@p/Modules/FixDetail")
+        component: () => import(/* webpackChunkName: "FixDetail" */"@p/Modules/FixDetail")
     },
-    DiscardApplication: {
-        path: "/manage/dashboard/discard",
+    MaintainForm: {
+        path: "/manage/maintainform",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "FixManager" */"@p/Modules/FixManager/discardApplication.vue")
+        component: () => import(/* webpackChunkName: "MaintainForm" */"@p/Modules/MaintainForm")
+    },
+    PurchaseForm: {
+        path: "/manage/purchaseform",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "PurchaseForm" */"@p/Modules/PurchaseForm")
+    },
+    IOPutForm: {
+        path: "/manage/ioputform",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "IOPutForm" */"@p/Modules/IOPutForm")
+    },
+    ScrapForm: {
+        path: "/manage/scrapform",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "ScrapForm" */"@p/Modules/ScrapForm")
     }
 };
