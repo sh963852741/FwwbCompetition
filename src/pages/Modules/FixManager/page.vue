@@ -21,7 +21,7 @@
                 <Scroll :height="210">
                     <template v-for="(item, index) in message">
                         <i-row style="margin-top: 15px" :key="index">
-                            <a :href="'/manage/' + pagePath[item.WorkflowName] + '?InstanceId=' + item.InstanceId + '&StepId=' + item.StepId">
+                            <a :href="'/manage/' + pagePath[item.WorkflowName] + '?instanceId=' + item.InstanceId + '&stepId=' + item.StepId">
                                 <i-col span="1" style="margin-left: 30px">
                                     <Icon size="24" style="float: right;" type="ios-pricetag" />
                                 </i-col>
@@ -102,7 +102,12 @@ export default {
                 {
                     title: "报废申请",
                     routerTo: {
-                        name: "ScrapForm"
+                        name: "ScrapForm",
+                        query: {
+                            workcellID: this.ID,
+                            instanceId: this.ID,
+                            stepId: this.ID
+                        }
                     },
                     icon: "md-trash"
                 }
@@ -120,11 +125,11 @@ export default {
             window.open("/manage/org/activityform?instanceId=" + instanceId + '&stepId=' + stepId);
         },
         routerTo (router) {
-            if (router.name === 'DiscardApplication') {
-               axios.post("/api/fwwb/DiscardApplicate", {id: this.ID}, msg => {
+            if (router.name === 'ScrapForm') {
+               axios.post("/api/fwwb/DiscardApplicate", {id: router.query.workcellID}, msg => {
                     if (msg.success) {
                         this.functionArray[4].routerTo.query.instanceId = msg.instanceId;
-                        this.functionArray[4].routerTo.query.stepID = msg.stepId;
+                        this.functionArray[4].routerTo.query.stepId = msg.stepId;
                         this.$router.push(router);
                     } else {
                         this.$Message.warning(msg.msg);
@@ -135,8 +140,10 @@ export default {
             }
         },
         async getWorkCellInfo () {
-            this.workcellInfo = await fixtureManager.getWorkCellInfo();
-            this.functionArray[2].routerTo.query.WorkCellID = this.workcellInfo.ID;
+            await fixtureManager.getWorkCellInfo().then(res => {
+                this.functionArray[4].routerTo.query.workcellID = res.ID;
+                this.workcellInfo = res;
+            })
         }
     },
     mounted () {

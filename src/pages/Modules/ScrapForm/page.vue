@@ -1,175 +1,218 @@
 <template>
     <div>
         <div class="paper">
-            <div class="blankPage"></div>
-            <p class="headLine">报废申请表</p>
-            <p class="date">填表时间：0000年00月00日</p>
-            <table border="1">
-                <tr>
-                    <td class="cellFirst">申请人</td>
-                    <td class="cellSecond">
-                        <i-input  v-if="io.fieldAccess.applicant === 'w' && io.isMyStep" v-model="io.data.applicant"/>
-                        <p v-else>{{io.data.applicant}}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cellFirst">物品代码</td>
-                    <td class="cellSecond">
-                        <i-input  v-if="io.fieldAccess.fixCode === 'w' && io.isMyStep" v-model="io.data.fixCode"/>
-                        <p v-else>{{io.data.fixCode}}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cellFirst">物品寿命计数</td>
-                    <td class="cellSecond shu_zi_jian_ju">
-                        <i-input  v-if="io.fieldAccess.usedCount === 'w' && io.isMyStep" v-model="io.data.usedCount"/>
-                        <p v-else>{{io.data.usedCount}}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cellFirst" >报废原因</td>
-                    <td class="cellSecond">
-                        <i-input  v-if="io.fieldAccess.scrapReason === 'w' && io.isMyStep" v-model="io.data.scrapReason"/>
-                        <p v-else>{{io.data.scrapReason}}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cellFirst" rowspan="2" style="height: 293px;">监管员审核意见</td>
-                    <td class="cellSecond">
-                        <div class="commentBox">
-                            <i-input type="textarea"  class="opinionForm" v-if="io.fieldAccess.supervisorOpinion === 'w' && io.isMyStep" v-model="io.data.supervisorOpinion"/>
-                            <p v-else>{{io.data.supervisorOpinion}}</p>
-                        </div>
-                    </td>
-                <tr>
-                     <td class="cellSecond iview-type-size" style=" border-top: dashed 1px rgb(198, 198, 198);">
-                        <div v-show="io.fieldAccess.supervisorIsPass === 'w' && io.isMyStep">
-                            是否通过：
-                            <i-radio-group v-model="io.data.supervisorIsPass">
-                                <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.supervisorIsPass === 'r' || !io.isMyStep"> 是</i-radio>
-                                <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.supervisorIsPass === 'r' || !io.isMyStep">否</i-radio>
-                            </i-radio-group>
-                            <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.supervisorIsPass === 'r' || !io.isMyStep" @click="submit">确认</i-button>
-                        </div>
-                        <div class="wen-zi-ju-you">
-                            <p >审核人（签名）：<i-input v-model="io.data.supervisor" v-if="io.fieldAccess.supervisor === 'w' && io.isMyStep"/>
-                                <span v-else>{{io.data.supervisor}}</span>
-                            </p>
-                            <i-date-picker type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-model="io.data.supervisorTime" v-if="io.fieldAccess.supervisorTime === 'w' && io.isMyStep"/>
-                            <p v-else>{{io.data.supervisorTime}}</p>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="cellFirst" rowspan="2" style="height: 293px;">经理审核意见</td>
-                    <td class="cellSecond">
-                        <div class="commentBox">
-                            <i-input type="textarea" class="opinionForm" v-if="io.fieldAccess.managerOpinion === 'w' && io.isMyStep" v-model="io.data.managerOpinion"/>
-                            <p v-else>{{io.data.managerOpinion}}</p>
-                        </div>
-                    </td>
-                <tr>
-                    <td class="cellSecond iview-type-size" style=" border-top: dashed 1px rgb(198, 198, 198);">
-                        <div v-show="io.fieldAccess.managerIsPass === 'w' && io.isMyStep">
-                            是否通过：
-                            <i-radio-group v-model="io.data.managerIsPass">
-                                <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.managerIsPass === 'r' || !io.isMyStep"> 是</i-radio>
-                                <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.managerIsPass === 'r' || !io.isMyStep">否</i-radio>
-                            </i-radio-group>
-                            <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.managerIsPass === 'r' || !io.isMyStep" @click="submit">确认</i-button>
-                        </div>
-                        <div class="wen-zi-ju-you">
-                            <p >审核人（签名）：<i-input v-model="io.data.manager" v-if="io.fieldAccess.manager === 'w' && io.isMyStep"/>
-                                <span v-else>{{io.data.manager}}</span>
-                            </p>
-                            <i-date-picker type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-model="io.data.managerTime" v-if="io.fieldAccess.supervisorTime === 'w' && io.isMyStep"/>
-                            <p v-else>{{io.data.managerTime}}</p>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <i-row>
+                <div class="blankPage"></div>
+                <p class="headLine">报废申请表</p>
+                <p class="date">填表时间：{{nowDate}}</p>
+                <table border="1">
+                    <tr>
+                        <td class="cellFirst">申请人</td>
+                        <td class="cellSecond">
+                            <p>{{io.data.Recorder}}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="cellFirst">物品代码</td>
+                        <td class="cellSecond">
+                            <p>{{io.data.Code}}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="cellFirst">物品寿命计数</td>
+                        <td class="cellSecond shu_zi_jian_ju">
+                            <p>{{io.data.UsedCount}}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="cellFirst" >报废原因</td>
+                        <td class="cellSecond">
+                            <i-input  type="textarea" :rows= "3" v-if="io.fieldAccess.Reason === 'w' && io.isMyStep" v-model="io.data.Reason"/>
+                            <p v-else>{{io.data.Reason}}</p>
+                        </td>
+                    </tr>
+                    <tr v-show="io.fieldAccess.SOpinion">
+                        <td class="cellFirst" rowspan="2" style="height:293px;">管理员审核意见</td>
+                        <td class="cellSecond">
+                            <div class="commentBox">
+                                是否通过：
+                                <i-radio-group v-model="SPass">
+                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                                    <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.SOpinion === 'r' || !io.isMyStep">否</i-radio>
+                                </i-radio-group>
+                                <i-input type="textarea" placeholder="（审核意见）" v-model="io.data.SOpinion" :rows="8" v-if="io.fieldAccess.SOpinion === 'w'"/>
+                                <p v-else>{{io.data.SOpinion}}</p>
+                                <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.SOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-show="io.data.SName">
+                        <td class="cellSecond" style="border-top: dashed 1px rgb(198,198,198);">
+                            <div class="wen_zi_kao_you shu_zi_jian_ju">
+                                <p>审核人（签名）：<span>{{io.data.SName}}</span></p>
+                                <p >{{io.data.SDate}}</p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-show="io.fieldAccess.MOpinion">
+                        <td class="cellFirst" rowspan="2" style="height:293px;">经理审核意见</td>
+                        <td class="cellSecond">
+                            <div class="commentBox">
+                                是否通过：
+                                <i-radio-group v-model="MPass">
+                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.MOpinion === 'r' || !io.isMyStep"> 是</i-radio>
+                                    <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.MOpinion === 'r' || !io.isMyStep">否</i-radio>
+                                </i-radio-group>
+                                <i-input type="textarea" placeholder="（审核意见）" v-model="io.data.MOpinion" :rows="8" v-if="io.fieldAccess.MOpinion === 'w'"/>
+                                <p v-else>{{io.data.SOpinion}}</p>
+                                <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.MOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr v-show="io.fieldAccess.MName">
+                        <td class="cellSecond" style="border-top: dashed 1px rgb(198,198,198);">
+                            <div class="wen_zi_kao_you shu_zi_jian_ju">
+                                <div class="wen_zi_kao_you shu_zi_jian_ju">
+                                <p>审核人（签名）：<span>{{io.data.MName}}</span></p>
+                                <p >{{io.data.SDate}}</p>
+                            </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </i-row>
+            <i-row class="add1 headline">
+                <i-button  v-show="io.currentStep==='填写申请表' && io.isMyStep" style="width: 200px;margin: 18px auto;" type="primary"  @click="submit">提交申请</i-button>
+            </i-row>
+        </div>
+        <div class="paper" v-if="io.timelines.length > 0">
+            <p class="smallhang"/>
+            <p class="headline">流程执行步骤</p>
+            <i-timeline style="padding: 20px;">
+                <TimelineItem v-for="(item,index) in io.timelines" :key="index">
+                    <i-row class="time">
+                        <i-col>
+                            <p>{{item.Key}}</p>
+                        </i-col>
+                    </i-row>
+                    <i-row v-for="(item,index) in item.steps" :key="index" class="content">
+                        <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                        <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                    </i-row>
+                </TimelineItem>
+            </i-timeline>
         </div>
     </div>
 </template>
 
 <script>
+const axios = require("axios");
+const enums = require("@/config/enums");
 export default {
+    mounted () {
+        this.getFromPrepage();
+        const date = new Date();
+        const year = date.getFullYear(); // 获取当前年份
+        const month = date.getMonth() + 1; // 获取当前月份(0-11,0代表1月所以要加1);
+        const day = date.getDate();
+        this.nowDate = `${year}年${month}月${day}日`; // 显示在最上方的填写日期
+    },
     data () {
         return {
+            icons: [
+                "",
+                "",
+                "success",
+                "success",
+                "error",
+                "warning"
+            ],
+            SPass: "",
+            MPass: "",
+            upLoad: [],
             io: {
-                fieldAccess: {
-                    applicant: 'w',
-                    fixCode: 'w',
-                    usedCount: 'w',
-                    scrapReason: 'w',
-                    supervisorOpinion: 'w',
-                    supervisorIsPass: 'w',
-                    supervisor: 'w',
-                    supervisorTime: 'w',
-                    managerOpinion: 'w',
-                    managerIsPass: 'w',
-                    manager: 'w',
-                    managerTime: 'w'
-                },
-                data: {
-                    applicant: "高级用户",
-                    fixCode: 'OOOOOO-OOO-OOOO',
-                    usedCount: 1000,
-                    scrapReason: "unknown",
-                    supervisorOpinion: "同意",
-                    supervisorIsPass: false,
-                    supervisor: "监管员",
-                    supervisorTime: "",
-                    managerOpinion: "同意",
-                    managerIsPass: false,
-                    manager: "工作间经理",
-                    managerTime: ""
-                },
+                fieldAccess: {},
+                data: {},
                 submitBtns: [],
                 shouldUpload: [],
                 allSteps: [],
-                isMyStep: true,
+                isMyStep: false,
                 timelines: [],
                 intstanceState: '',
-                currentStep: ''
-            }
-        }
+                currentStep: '',
+                workcellNName: "",
+                stepid: "",
+                instanceId: "",
+                version: ''
+            },
+            nowDate: "",
+            stepInfo: enums.stepInfo,
+            instanceId: "",
+            stepId: "",
+            detailMode: false
+        };
     },
     methods: {
+        getFromPrepage () {
+            this.instanceId = this.$route.query.instanceId;
+            this.stepId = this.$route.query.stepId;
+            this.detailMode = false;
+            this.getFieldAccess();
+        },
+        getFieldAccess () {
+            axios.post("/api/workflow/LoadInstance", {instanceId: this.instanceId, stepId: this.stepId, detail: this.detailMode}, msg => {
+                if (msg.success) {
+                    this.io = msg;
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
+        },
         submit () {
+            if (this.io.data.SPass !== undefined) {
+                this.io.data.SPass = this.SPass;
+            }
+            if (this.io.data.MPass !== undefined) {
+                this.io.data.MPass = this.MPass;
+            }
+            this.io.shouldUpload.forEach(value => {
+                this.upLoad[value] = this.io[value] || this.io.data[value]
+            });
+            axios.post("/api/workflow/SubmitInstance", {...this.upLoad}, msg => {
+                if (msg.success) {
+                    this.$Message.info("保存成功");
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            })
         }
     }
 }
 </script>
 
-<style lang="less">
-    .wen-zi-ju-you{
-        text-align: right;
-    }
-    .opinionForm .ivu-input {
-    border:1px solid #dcdee2;
-    }
-    .iview-type-size{
-        font-size: 18.7px;
-    }
-    .paper {
+<style>
+.paper {
     width: 800px;
-    height: 1700px;
+    height: 1400px;
     margin: 18px auto;
     background-color: white;
     border: solid 1px rgb(198, 198, 198);
     box-shadow:1px 1px 10px -2px #333333;
-    }
-    .blankPage{
-        height:108px;
-    }
-    .headLine{
-        margin: 25px auto;
-        text-align: center;
-        font-size: 32px;
-        font-family: '';
-    }
-    .date{
+}
+.blankPage {
+    height:108px;
+}
+.button-position{
+    float:right;
+    margin-top: 10px;
+}
+.headLine{
+    margin: 25px auto;
+    text-align: center;
+    font-size: 32px;
+    font-family: '';
+}
+.date{
     margin-bottom: 15px;
     margin-top: 15px;
     margin-left:467px;
@@ -177,35 +220,43 @@ export default {
     font-family: 'FangSong';
     display: inline-block;
     letter-spacing: 1px;
-    }
-    table{
+}
+table{
     margin: 10px auto;
     border-collapse: collapse;
     text-align: center;
     font-family: 'FangSong';
     font-size: 24px;
     line-height: 40px;
-    }
-    .cellFirst{
-    width: 114px;
-    height: 40px;
+}
+.cellFirst{
+    width: 155px;
+    height: 100px;
     padding: 5px 10px;
-    }
-    .cellSecond{
-        width:407px;
-        height: 40px;
-        padding: 5px 10px;
-        text-align: left;
-    }
-    .wen_zi_kao_you{
-        margin:0px;
-        text-align: right;
-    }
-    .commentBox{
-        text-align: left;
-        height: 55px;
-    }
-    .shu_zi_jian_ju{
-        letter-spacing: 2px;
-    }
+}
+.cellSecond{
+    width:450px;
+    height: 100px;
+    padding: 5px 10px;
+}
+.shu_zi_jian_ju{
+    letter-spacing: 2px;
+}
+.commentBox{
+    min-height:180px;
+    text-align: left;
+}
+.wen_zi_kao_you{
+    margin:0px;
+    text-align: right;
+}
+.add1 {
+        height: 80px;
+}
+.headline {
+    margin-top: 9px;
+    text-align: center;
+    font-size: 24px;
+    font-family: '';
+}
 </style>
