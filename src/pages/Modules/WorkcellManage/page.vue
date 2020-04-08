@@ -184,6 +184,7 @@
                         </template>
                         <template slot="Action" slot-scope="{row}">
                             <i-button @click="delUser(row)" type="warning">移除</i-button>
+                            <i-button @click="setPassword(row)">重置密码</i-button>
                         </template>
                     </i-table>
                 </i-tab-pane>
@@ -203,6 +204,7 @@ import tableCols from "./tableCols";
 const app = require("@/config");
 // const echarts = require("echarts");
 const axios = require("axios");
+const md5 = require("md5");
 export default {
     components: {
         "user-form": userForm,
@@ -423,6 +425,11 @@ export default {
             axios.post("/api/security/GetUsers", {departId: this.workcellInfo.ID}, msg => {
                 this.userTable = msg.data;
             });
+        },
+        setPassword (row) {
+            axios.post("/api/security/SetPassword", {userId: row.ID, departId: this.workcellInfo.ID, password: md5('123456')}, msg => {
+                if (msg.success) this.$Message.success('密码重置为123456');
+            })
         },
         setPositon (userInfo, position) {
             axios.post("/api/security/SetPositionByUser", {departId: this.workcellInfo.ID, userId: userInfo.ID, position}, msg => {
