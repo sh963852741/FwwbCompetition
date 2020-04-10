@@ -21,7 +21,7 @@
                 <Scroll :height="210">
                     <template v-for="(item, index) in message">
                         <i-row style="margin-top: 15px" :key="index">
-                            <a :href="'/manage/' + pagePath[item.WorkflowName] + '?instanceId=' + item.InstanceId + '&stepId=' + item.StepId">
+                            <a :href="'/manage/' + pagePath[item.WorkflowName] + '?InstanceId=' + item.InstanceId + '&StepId=' + item.StepId">
                                 <i-col span="1" style="margin-left: 30px">
                                     <Icon size="24" style="float: right;" type="ios-pricetag" />
                                 </i-col>
@@ -88,7 +88,9 @@ export default {
                     title: "采购入库申请",
                     routerTo: {
                         name: "PurchaseForm",
-                        query: {}
+                        query: {
+                            WorkCellID: this.ID
+                        }
                     },
                     icon: "ios-cart"
                 },
@@ -105,8 +107,8 @@ export default {
                         name: "ScrapForm",
                         query: {
                             workcellID: this.ID,
-                            instanceId: this.ID,
-                            stepId: this.ID
+                            InstanceId: this.ID,
+                            StepId: this.ID
                         }
                     },
                     icon: "md-trash"
@@ -128,13 +130,16 @@ export default {
             if (router.name === 'ScrapForm') {
                axios.post("/api/fwwb/DiscardApplicate", {id: router.query.workcellID}, msg => {
                     if (msg.success) {
-                        this.functionArray[4].routerTo.query.instanceId = msg.instanceId;
-                        this.functionArray[4].routerTo.query.stepId = msg.stepId;
+                        this.functionArray[4].routerTo.query.InstanceId = msg.instanceId;
+                        this.functionArray[4].routerTo.query.StepId = msg.stepId;
                         this.$router.push(router);
                     } else {
                         this.$Message.warning(msg.msg);
                     }
                 })
+            } else if (router.name === "PurchaseForm") {
+                this.functionArray[2].routerTo.query.WorkCellID = this.workcellInfo.ID;
+                this.$router.push(router);
             } else {
                 this.$router.push(router);
             }
