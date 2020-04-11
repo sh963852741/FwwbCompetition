@@ -9,7 +9,7 @@
                     <tr>
                         <td class="cellFirst">申请人</td>
                         <td class="cellSecond">
-                            <p>{{io.data.Recorder}}</p>
+                            <p>{{io.data.Owner}}</p>
                         </td>
                     </tr>
                     <tr>
@@ -154,8 +154,8 @@ export default {
     },
     methods: {
         getFromPrepage () {
-            this.instanceId = this.$route.query.instanceId;
-            this.stepId = this.$route.query.stepId;
+            this.instanceId = this.$route.query.InstanceId;
+            this.stepId = this.$route.query.StepId;
             this.detailMode = false;
             this.getFieldAccess();
         },
