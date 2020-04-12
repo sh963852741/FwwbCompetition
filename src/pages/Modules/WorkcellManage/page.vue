@@ -131,7 +131,7 @@
                             <i-table :columns="fixtureTableCol" :data="fixtures">
                                 <template slot="Action" slot-scope="{row}">
                                     <i-button @click="toDetail(row)">修改</i-button>
-                                    <i-button @click="removeFix(row)" type="warning">删除</i-button>
+                                    <i-button @click="removeFixture(row)" type="warning">删除</i-button>
                                 </template>
                             </i-table>
                         </i-col>
@@ -189,6 +189,7 @@
                     </i-table>
                 </i-tab-pane>
             </i-tabs>
+            <i-button-group></i-button-group>
         </i-card>
         <i-modal v-model="showModal" :title="modalTitle"  @on-ok="submit()">
             <component :is="bindingForm" ref="form" :formData="formData"></component>
@@ -301,9 +302,13 @@ export default {
                             display: data.isParent !== undefined ? 'flex' : 'none',
                             float: 'right',
                             width: '64px'
-                        }
+                        },
+                        class: 'ivu-btn-group'
                     }, [
                         h('Button', {
+                            style: {
+                                width: '50%'
+                            },
                             props: {
                                 size: 'small',
                                 icon: 'md-add'
@@ -313,6 +318,9 @@ export default {
                             }
                         }),
                         h('Button', {
+                            style: {
+                                width: '50%'
+                            },
                             props: {
                                 size: 'small',
                                 icon: 'md-remove',
