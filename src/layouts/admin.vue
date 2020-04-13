@@ -65,7 +65,6 @@
             <Content :style="{margin: '20px'}" class="content">
                 <slot></slot>
             </Content>
-            <Footer class="layout-footer-center">&copy; 2019 <a href="http://www.ricebird.cn">厦门米雀软件科技有限公司</a> 版权所有</Footer>
         </Layout>
     </Layout>
 </template>
@@ -91,38 +90,38 @@ export default {
         }
         app.getMenus(menus => {
             if (process.env.NODE_ENV !== "production") { // 不是生产模式
-                console.log(menus);
-                menus.push({
-                        Text: "WorkCell管理(会没有的)",
-                        IdHint: null,
-                        Url: null,
-                        Href: null,
-                        Culture: null,
-                        Device: 0,
-                        Position: "20",
-                        Selected: false,
-                        Content: null,
-                        Items: Array(0),
-                        ActionName: "WorkcellManage",
-                        ControllerName: "SecurityAdmin",
-                        Icons: "fa-home"
-                    },
-                    {
-                        Text: "这才是首页(会没有的)",
-                        IdHint: null,
-                        Url: null,
-                        Href: null,
-                        Culture: null,
-                        Device: 0,
-                        Position: "20",
-                        Selected: false,
-                        Content: null,
-                        Items: Array(0),
-                        ActionName: "FixManager",
-                        ControllerName: "SecurityAdmin",
-                        Icons: "fa-home"
-                    }
-                )
+                // console.log(menus);
+                // menus.push({
+                //         Text: "WorkCell管理(会没有的)",
+                //         IdHint: null,
+                //         Url: null,
+                //         Href: null,
+                //         Culture: null,
+                //         Device: 0,
+                //         Position: "20",
+                //         Selected: false,
+                //         Content: null,
+                //         Items: Array(0),
+                //         ActionName: "WorkcellManage",
+                //         ControllerName: "SecurityAdmin",
+                //         Icons: "fa-home"
+                //     },
+                //     {
+                //         Text: "这才是首页(会没有的)",
+                //         IdHint: null,
+                //         Url: null,
+                //         Href: null,
+                //         Culture: null,
+                //         Device: 0,
+                //         Position: "20",
+                //         Selected: false,
+                //         Content: null,
+                //         Items: Array(0),
+                //         ActionName: "FixManager",
+                //         ControllerName: "SecurityAdmin",
+                //         Icons: "fa-home"
+                //     }
+                // )
             }
             this.$set(app, "menus", menus);
             this.menus = app.menus;

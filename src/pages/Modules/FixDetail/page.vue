@@ -1,0 +1,325 @@
+<template>
+    <i-card :padding="100">
+        <i-row type="flex" style="margin: -50px 0px 40px 0px" align="middle">
+                <i-col span="3">
+                    <i-avatar :src="app.webInfo.avatar" size="120"/>
+                </i-col>
+                <i-col span="21">
+                    <i-row style="font-size:30px; margin-bottom:10px">Code: {{Data.Code}}</i-row>
+                    <i-row style="font-size:30px; margin-bottom:10px">SeqID: {{Data.SeqID}}</i-row>
+                </i-col>
+            </i-row>
+        <i-tabs v-model="tabSelect" style="margin-top: 20px">
+            <i-tab-pane label="实体信息" name="entityInfo">
+                <i-row style="margin-left: 15px">
+                    <i-spin fix size="large" v-show="tableLoading"></i-spin>
+                    <i-col span="16">
+                        <i-form :model="Data" :rules="ruleForEntity" ref="form">
+                            <i-row type="flex">
+                                <i-col span="10">
+                                    <i-form-item label="夹具位置" prop="Bin">
+                                        <i-input v-model="Data.Bin" />
+                                    </i-form-item>
+                                </i-col>
+                                <i-col span="10" offset="2">
+                                    <i-form-item label="采购单据号" prop="BillNo">
+                                        <i-input v-model="Data.BillNo" />
+                                    </i-form-item>
+                                </i-col>
+                            </i-row>
+                            <i-row type="flex">
+                                <i-col span="10">
+                                    <i-form-item label="建档日期" prop="RegDate">
+                                        <i-date-picker type="date" v-model="Data.RegDate" format="yyyy年MM月dd日" />
+                                    </i-form-item>
+                                </i-col>
+                                <i-col span="10" offset="2">
+                                    <i-form-item label="生产日期" prop="ProduceDate">
+                                        <i-date-picker type="date" v-model="Data.ProduceDate" format="yyyy年MM月dd日" />
+                                    </i-form-item>
+                                </i-col>
+                            </i-row>
+                            <i-row type="flex">
+                                <i-col span="10">
+                                    <i-form-item label="使用次数" prop="UsedCount">
+                                        <i-input v-model="Data.UsedCount"/>
+                                    </i-form-item>
+                                </i-col>
+                                <i-col span="10" offset="2">
+                                    <i-form-item label="维修日期" prop="RepairDate">
+                                        <i-date-picker type="date" v-model="Data.RepairDate" format="yyyy年MM月dd日" />
+                                    </i-form-item>
+                                </i-col>
+                            </i-row>
+                            <i-row type="flex">
+                                <i-col span="10">
+                                    <i-form-item label="负责人" prop="Owner">
+                                        <i-input v-model="Data.Owner"/>
+                                    </i-form-item>
+                                </i-col>
+                            </i-row>
+                        </i-form>
+                        <i-button type="primary" @click="saveEntity()" :loading="isSaving">保存</i-button>
+                    </i-col>
+                    <i-col span="7" offset="1">
+                        <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
+                        <i-drawer title="修改记录" v-model="showLog" scrollable width="20">
+                            <i-timeline class="timeline i-scrollbar-hide">
+                                <TimelineItem v-for="(item,index) in logs" :key="index">
+                                    <i-row>
+                                        <p class="time">{{item.OperateOn}} {{item.Operator}}</p>
+                                        <p class="content">
+                                            <i-row v-for="(d,index) in item.Details" :key="index">
+                                                {{d}}
+                                            </i-row>
+                                        </p>
+                                    </i-row>
+                                </TimelineItem>
+                            </i-timeline>
+                        </i-drawer>
+                    </i-col>
+                </i-row>
+            </i-tab-pane>
+            <i-tab-pane label="夹具出入库记录" name="IORecords">
+                <i-row style="margin-left: 15px;">
+                    <i-row>
+                        <i-spin fix size="large" v-show="tableLoading"></i-spin>
+                        <i-row class="title" v-if="inRecords.length>0">出库记录:</i-row>
+                        <template v-for="(item,index) in inRecords">
+                            <Alert type="success" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于{{item.RecOn}}入库成功</Alert>
+                        </template>
+                    </i-row>
+                    <i-row class="title" v-if="outRecords.length>0">入库记录:</i-row>
+                    <i-row>
+                        <i-spin fix size="large" v-show="tableLoading"></i-spin>
+                        <template v-for="(item,index) in outRecords">
+                            <Alert type="error" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于{{item.RecOn}}出库成功</Alert>
+                        </template>
+                    </i-row>
+                    <i-row v-if="inRecords.length==0 && outRecords.length==0">
+                        <!--img :src="pic" /-->此处需要一张表示没有记录的图片
+                    </i-row>
+                </i-row>
+            </i-tab-pane>
+            <i-tab-pane label="夹具维修/报废记录" name="MSRecords">
+                <i-row style="margin-left: 15px;">
+                    <i-row>
+                        <i-spin fix size="large" v-show="tableLoading"></i-spin>
+                        <i-row class="title" v-if="maintRecords.length>0">出库记录:</i-row>
+                        <template v-for="(item,index) in maintRecords">
+                            <Alert type="success" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于{{item.RecOn}}维修成功</Alert>
+                        </template>
+                    </i-row>
+                    <i-row class="title" v-if="scrapRecords.length>0">入库记录:</i-row>
+                    <i-row>
+                        <i-spin fix size="large" v-show="tableLoading"></i-spin>
+                        <template v-for="(item,index) in scrapRecords">
+                            <Alert type="error" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于{{item.RecOn}}报废成功</Alert>
+                        </template>
+                    </i-row>
+                    <i-row v-if="scrapRecords.length==0 && maintRecords.length==0">
+                        <!--img :src="pic" /-->此处需要一张表示没有记录的图片>
+                    </i-row>
+                </i-row>
+            </i-tab-pane>
+            <i-tab-pane label="工具夹寿命预测" name="lifePredic">
+                <i-row style="margin-left: 15px;">
+                    内容待定
+                </i-row>
+            </i-tab-pane>
+            <i-tab-pane label="工具夹实体定位" name="Location">
+                <i-row style="margin-left: 15px;">
+                    内容待定
+                </i-row>
+            </i-tab-pane>
+        </i-tabs>
+    </i-card>
+</template>
+
+<script>
+const app = require("@/config");
+const axios = require("axios");
+export default {
+    data () {
+        return {
+            app,
+            logs: [],
+            showLog: false,
+            entityName: "",
+            inRecords: [
+                {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }
+            ],
+            outRecords: [
+                {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }
+            ],
+            maintRecords: [
+                {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }
+            ],
+            scrapRecords: [
+                {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }, {
+                    Code: 'oooo-oooo',
+                    SeqID: 0,
+                    RecByName: "OOO",
+                    RecOn: "0000年00月00日 00：00"
+                }
+            ],
+            tabSelect: "",
+            tableLoading: false,
+            isSaving: false,
+            Data: {},
+            EntityID: "",
+            // WorkcellID: "",
+            ruleForEntity: {}
+        }
+    },
+    methods: {
+        saveEntity () {
+            this.isSaving = true;
+            let form = this.$refs["form"];
+            form.validate(res => {
+                if (!res) return;
+                axios.post("/api/fwwb/SaveFix", this.Data, msg => {
+                    if (msg.success) {
+                        this.$Message.success("实体信息修改成功");
+                    } else {
+                        this.$Message.warning(msg.msg);
+                    }
+                    form.resetFields();
+                    this.isSaving = false;
+                    this.getFixEntity();
+                });
+            })
+        },
+        getFixEntity () {
+            axios.post("/api/fwwb/GetFix", {id: this.EntityID}, msg => {
+                this.Data = msg.data;
+            })
+        }
+    },
+    mounted () {
+        app.title = "夹具实体";
+        this.$Spin.show({
+            render: (h) => {
+                return h('div', [
+                    h('Icon', {
+                        'class': 'spin-icon-load',
+                        props: {
+                            type: 'ios-loading',
+                            size: 18
+                        }
+                    }),
+                    h('div', '正在获取夹具实体信息，请稍候……')
+                ])
+            }
+        });
+        this.EntityID = this.$route.query.EntityID; // "6a9cf94f-39b7-4355-aa3e-43ba92cd0aa4";// "6a9cf94f-39b7-4355-aa3e-43ba92cd0aa4";//
+        // this.WorkcellID = this.$route.query.WorkcellID;// "7c19253d-7aa3-4b79-8d07-2958c46fc684";//
+        this.getFixEntity();
+        this.tabSelect = this.$route.query.tabSelect || "entityInfo";
+        this.$Spin.hide();
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.title {
+    font-size: 20px;
+    color: #17233d;
+    padding: 10px 0px;
+    margin-top: 10px;
+}
+.ivu-form-item .ivu-date-picker{
+    width: 100%;
+}
+.spin-icon-load{
+    animation: ani-demo-spin 1s linear infinite;
+}
+.ivu-poptip-body-content {
+    overflow: hidden;
+}
+.tip {
+    font-size: 13px;
+    font-weight: bold;
+}
+.username {
+    font-size: 34px;
+    color: #17233d;
+    padding: 5px 0;
+    font-weight: bold;
+}
+</style>
