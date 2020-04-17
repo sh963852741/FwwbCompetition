@@ -13,9 +13,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="cellFirst">物品代码</td>
+                    <td class="cellFirst">物品代码</td>
                         <td class="cellSecond">
-                            <p>{{io.data.Code}}</p>
+                            <i-input v-if="io.fieldAccess.Code === 'w' && io.isMyStep" v-model="io.data.Code"/>
+                            <p v-else>{{io.data.Code}}</p>
                         </td>
                     </tr>
                     <tr>
@@ -32,53 +33,51 @@
                         </td>
                     </tr>
                     <tr v-show="io.fieldAccess.SOpinion">
-                        <td class="cellFirst" rowspan="2" style="height:293px;">管理员审核意见</td>
-                        <td class="cellSecond">
-                            <div class="commentBox">
-                                是否通过：
-                                <i-radio-group v-model="SPass">
-                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.SOpinion === 'r' || !io.isMyStep"> 是</i-radio>
-                                    <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.SOpinion === 'r' || !io.isMyStep">否</i-radio>
-                                </i-radio-group>
-                                <i-input type="textarea" placeholder="（审核意见）" v-model="io.data.SOpinion" :rows="8" v-if="io.fieldAccess.SOpinion === 'w'"/>
-                                <p v-else>{{io.data.SOpinion}}</p>
-                                <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.SOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-show="io.data.SName">
-                        <td class="cellSecond" style="border-top: dashed 1px rgb(198,198,198);">
-                            <div class="wen_zi_kao_you shu_zi_jian_ju">
-                                <p>审核人（签名）：<span>{{io.data.SName}}</span></p>
-                                <p >{{io.data.SDate}}</p>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-show="io.fieldAccess.MOpinion">
-                        <td class="cellFirst" rowspan="2" style="height:293px;">经理审核意见</td>
-                        <td class="cellSecond">
-                            <div class="commentBox">
-                                是否通过：
-                                <i-radio-group v-model="MPass">
-                                    <i-radio label="true" class="iview-type-size" :disabled="io.fieldAccess.MOpinion === 'r' || !io.isMyStep"> 是</i-radio>
-                                    <i-radio label="false" class="iview-type-size" :disabled="io.fieldAccess.MOpinion === 'r' || !io.isMyStep">否</i-radio>
-                                </i-radio-group>
-                                <i-input type="textarea" placeholder="（审核意见）" v-model="io.data.MOpinion" :rows="8" v-if="io.fieldAccess.MOpinion === 'w'"/>
-                                <p v-else>{{io.data.SOpinion}}</p>
-                                <i-button type="primary" size="small" class="button-position" :disabled="io.fieldAccess.MOpinion === 'r' || !io.isMyStep" @click="submit">确认</i-button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-show="io.fieldAccess.MName">
-                        <td class="cellSecond" style="border-top: dashed 1px rgb(198,198,198);">
-                            <div class="wen_zi_kao_you shu_zi_jian_ju">
-                                <div class="wen_zi_kao_you shu_zi_jian_ju">
-                                <p>审核人（签名）：<span>{{io.data.MName}}</span></p>
-                                <p >{{io.data.SDate}}</p>
-                            </div>
-                            </div>
-                        </td>
-                    </tr>
+                    <td class="smallhang">监管员审核意见</td>
+                    <td class="longhang" colspan="4">
+                        <div v-show="io.fieldAccess.SPass === 'w' && io.isMyStep">
+                            是否通过：
+                            <i-radio-group v-model="SPass">
+                                <i-radio label="true" class="iview-type-size"> 是</i-radio>
+                                <i-radio label="false" class="iview-type-size">否</i-radio>
+                            </i-radio-group>
+                            <i-button type="primary" size="small" class="button-position" @click="submit">确认</i-button>
+                        </div>
+                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.SOpinion" v-if="io.fieldAccess.SOpinion === 'w' && io.isMyStep"/>
+                        <p v-else>{{io.data.SOpinion}}</p>
+                        <div class="wen-zi-ju-you" v-show="io.fieldAccess.SName">
+                            <p>审核人（签名）：
+                                <!-- <i-input v-model="io.data.SName" v-if="io.fieldAccess.AffiliatedDepart === 'w' && io.isMyStep"/> -->
+                                <span>{{io.data.SName}}</span>
+                            </p>
+                            <!-- <i-date-picker v-model="io.data.SDate" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.SDate === 'w' && io.isMyStep"/> -->
+                            <p>{{io.data.SDate}}</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr v-show="io.fieldAccess.MOpinion">
+                    <td class="smallhang">经理审核意见</td>
+                    <td class="longhang" colspan="4">
+                        <div v-show="io.fieldAccess.MPass === 'w' && io.isMyStep">
+                            是否通过：
+                            <i-radio-group v-model="MPass">
+                                <i-radio label="true" class="iview-type-size"> 是</i-radio>
+                                <i-radio label="false" class="iview-type-size">否</i-radio>
+                            </i-radio-group>
+                            <i-button type="primary" size="small" class="button-position" @click="submit">确认</i-button>
+                        </div>
+                        <i-input type="textarea" class="opinionForm" :rows="3" placeholder="（审核意见）" v-model="io.data.MOpinion" v-if="io.fieldAccess.MOpinion === 'w' && io.isMyStep"/>
+                        <p v-else>{{io.data.MOpinion}}</p>
+                        <div class="wen-zi-ju-you" v-show="io.fieldAccess.MName">
+                            <p>审核人（签名）：
+                                <!-- <i-input v-model="io.data.SName" v-if="io.fieldAccess.AffiliatedDepart === 'w' && io.isMyStep"/> -->
+                                <span>{{io.data.MName}}</span>
+                            </p>
+                            <!-- <i-date-picker v-model="io.data.SDate" type="date" format="yyyy年MM月dd日" placeholder="审核时间" v-if="io.fieldAccess.SDate === 'w' && io.isMyStep"/> -->
+                            <p>{{io.data.MDate}}</p>
+                        </div>
+                    </td>
+                </tr>
                 </table>
             </i-row>
             <i-row class="add1 headline">
@@ -191,6 +190,23 @@ export default {
 </script>
 
 <style>
+.wei_zhi_ju_zuo {
+    text-align: left;
+}
+.wen-zi-ju-you{
+    text-align: right;
+}
+.smallhang {
+    width: 101px;
+    height: 55px;
+    padding: 0px 10px;
+}
+.longhang {
+    width: 471px;
+    height: 55px;
+    padding: 10px 10px;
+    text-align: left;
+}
 .paper {
     width: 800px;
     height: 1400px;

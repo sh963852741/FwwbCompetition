@@ -8,8 +8,8 @@
                 <i-col span="21">
                     <i-row>
                         <i-row class="title">{{workcellInfo.Name}}</i-row>
-                        <i-col class="tip" span="3">访问级别：管理员</i-col>
-                        <i-col class="tip" span="3">WorCellID：{{workcellInfo.Code||'待填写'}}</i-col>
+                        <i-col class="tip" span="4">访问级别：管理员</i-col>
+                        <i-col class="tip" span="4">WorCellID：{{workcellInfo.Code||'待填写'}}</i-col>
                     </i-row>
                 </i-col>
             </i-row>
