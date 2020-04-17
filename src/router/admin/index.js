@@ -9,6 +9,11 @@ module.exports = {
         layout: "admin",
         component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/WorkflowConfig")
     },
+    MyPending: {
+        path: "/manage/workflow/pending",
+        layout: "admin",
+        component: () => import(/* webpackChunkName: "WorkflowManager" */"@p/Modules/MyPending")
+    },
     WorkcellManage: {
         path: "/manage/workcell",
         layout: "admin",
@@ -22,21 +27,21 @@ module.exports = {
     MaintainForm: {
         path: "/manage/maintainform",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "MaintainForm" */"@p/Modules/MaintainForm")
+        component: () => import(/* webpackChunkName: "WorkflowForms" */"@p/Modules/MaintainForm")
     },
     PurchaseForm: {
         path: "/manage/purchaseform",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "PurchaseForm" */"@p/Modules/PurchaseForm")
+        component: () => import(/* webpackChunkName: "WorkflowForms" */"@p/Modules/PurchaseForm")
     },
     IOPutForm: {
         path: "/manage/ioputform",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "IOPutForm" */"@p/Modules/IOPutForm")
+        component: () => import(/* webpackChunkName: "WorkflowForms" */"@p/Modules/IOPutForm")
     },
     ScrapForm: {
         path: "/manage/scrapform",
         layout: "admin",
-        component: () => import(/* webpackChunkName: "ScrapForm" */"@p/Modules/ScrapForm")
+        component: () => import(/* webpackChunkName: "WorkflowForms" */"@p/Modules/ScrapForm")
     }
 };
