@@ -55,7 +55,7 @@
                         </i-upload>
                         <div v-if="formData !== null">
                             <i-row>
-                                <Button type="text" style="text-align: left;width: 300px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
+                                <Button type="text" style="text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
                                 <Button type="text" @click="uploadFile" :loading="loadingStatus">上传</Button>
                                 <Button type="text" @click="removeFormData"><Icon type="ios-close" /></Button>
                             </i-row>
@@ -123,16 +123,43 @@
                 <i-button  v-show="io.currentStep==='填写申请表' && io.isMyStep" style="width: 200px;margin: 18px auto;" type="primary" @click="submit">提交申请</i-button>
             </i-row>
         </div>
+        <div class="paper" v-if="io.timelines.length > 0">
+            <p class="smallhang"/>
+            <p class="headline">流程执行步骤</p>
+            <i-timeline style="padding: 20px;">
+                <TimelineItem v-for="(item,index) in io.timelines" :key="index">
+                    <i-row class="time">
+                        <i-col>
+                            <p>{{item.Key}}</p>
+                        </i-col>
+                    </i-row>
+                    <i-row v-for="(item,index) in item.steps" :key="index" class="content">
+                        <Alert v-if="item.State !== 0 && item.State !== 1" show-icon :type="icons[item.State]">{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                        <Alert v-else show-icon>{{item.StepName}}于{{item.CreatedOn}}{{item.Time}}由{{item.ExecutorName}}{{stepInfo[item.State]}}</Alert>
+                    </i-row>
+                </TimelineItem>
+            </i-timeline>
+        </div>
     </div>
 </template>
 
 <script>
+const enums = require("@/config/enums");
 const axios = require("axios");
 const table = "ActivityApplication";
 const usage = "附件";
 export default {
     data () {
         return {
+            icons: [
+                "",
+                "",
+                "success",
+                "success",
+                "error",
+                "warning"
+            ],
+            stepInfo: enums.stepInfo,
             stepId: "",
             instanceId: "",
             loadingStatus: false,
@@ -150,9 +177,6 @@ export default {
                     Photo: 'w'
                 },
                 data: {
-                    Owner: '',
-                    BillNo: '',
-                    WorkCell: ''
                 },
                 submitBtns: [],
                 shouldUpload: [],
@@ -284,7 +308,7 @@ export default {
     }
     .paper {
     width: 800px;
-    height: 1700px;
+    height: 1200px;
     margin: 18px auto;
     background-color: white;
     border: solid 1px rgb(198, 198, 198);
