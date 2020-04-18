@@ -5,63 +5,61 @@
                     <i-avatar :src="app.webInfo.avatar" size="120"/>
                 </i-col>
                 <i-col span="21">
-                    <i-row style="font-size:30px; margin-bottom:10px">夹具名称：名字字字字字</i-row>
-                    <i-row>
-                        <i-col>夹具实体数量：00</i-col>
-                    </i-row>
+                    <i-row style="font-size:30px; margin-bottom:10px">Code: {{Data.Code}}</i-row>
+                    <i-row style="font-size:30px; margin-bottom:10px">SeqID: {{Data.SeqID}}</i-row>
                 </i-col>
             </i-row>
         <i-tabs v-model="tabSelect" style="margin-top: 20px">
-            <i-tab-pane label="基本信息" name="basicInfo">
+            <i-tab-pane label="实体信息" name="entityInfo">
                 <i-row style="margin-left: 15px">
                     <i-spin fix size="large" v-show="tableLoading"></i-spin>
                     <i-col span="16">
-                        <i-form :model="fixInfo" :rules="ruleForBasic" ref="form">
-                            <i-row type="flex" justify="space-between">
-                                <i-col span="22">
-                                    <i-form-item label="夹具名称" span="8" prop="Name">
-                                        <i-input v-model="fixInfo.Name"/>
+                        <i-form :model="Data" :rules="ruleForEntity" ref="form">
+                            <i-row type="flex">
+                                <i-col span="10">
+                                    <i-form-item label="夹具位置" prop="Bin">
+                                        <i-input v-model="Data.Bin" />
+                                    </i-form-item>
+                                </i-col>
+                                <i-col span="10" offset="2">
+                                    <i-form-item label="采购单据号" prop="BillNo">
+                                        <i-input v-model="Data.BillNo" />
                                     </i-form-item>
                                 </i-col>
                             </i-row>
                             <i-row type="flex">
                                 <i-col span="10">
-                                    <i-form-item label="夹具代码" prop="Code">
-                                        <i-input v-model="fixInfo.Code" />
+                                    <i-form-item label="建档日期" prop="RegDate">
+                                        <i-date-picker type="date" v-model="Data.RegDate" format="yyyy年MM月dd日" />
                                     </i-form-item>
                                 </i-col>
                                 <i-col span="10" offset="2">
-                                    <i-form-item label="夹具用途" prop="UsedFor">
-                                        <i-input v-model="fixInfo.UsedFor" />
+                                    <i-form-item label="生产日期" prop="ProduceDate">
+                                        <i-date-picker type="date" v-model="Data.ProduceDate" format="yyyy年MM月dd日" />
                                     </i-form-item>
                                 </i-col>
                             </i-row>
                             <i-row type="flex">
                                 <i-col span="10">
-                                    <i-form-item label="夹具所属类别">
-                                        <i-input v-model="fixInfo.Family"/>
+                                    <i-form-item label="使用次数" prop="UsedCount">
+                                        <i-input v-model="Data.UsedCount"/>
                                     </i-form-item>
                                 </i-col>
                                 <i-col span="10" offset="2">
-                                    <i-form-item label="夹具模组">
-                                        <i-input v-model="fixInfo.Model"/>
+                                    <i-form-item label="维修日期" prop="RepairDate">
+                                        <i-date-picker type="date" v-model="Data.RepairDate" format="yyyy年MM月dd日" />
                                     </i-form-item>
                                 </i-col>
                             </i-row>
                             <i-row type="flex">
                                 <i-col span="10">
-                                    <i-form-item label="夹具料号">
-                                        <i-input v-model="fixInfo.PartNo"/>
-                                    </i-form-item>
-                                </i-col>
-                                <i-col span="10" offset="2">
-                                    <i-form-item label="建档日期" prop="DocDate">
-                                        <i-date-picker type="date" v-model="fixInfo.DocDate" format="yyyy年MM月dd日" />
+                                    <i-form-item label="负责人" prop="Owner">
+                                        <i-input v-model="Data.Owner"/>
                                     </i-form-item>
                                 </i-col>
                             </i-row>
                         </i-form>
-                        <i-button type="primary" @click="savefixDetail()" :loading="isSaving">保存</i-button>
+                        <i-button type="primary" @click="saveEntity()" :loading="isSaving">保存</i-button>
                     </i-col>
                     <i-col span="7" offset="1">
                         <i-button @click="showLog = !showLog" type="text" style="float:right; padding-top: 12px;">查看修改记录</i-button>
@@ -81,28 +79,6 @@
                         </i-drawer>
                     </i-col>
                 </i-row>
-            </i-tab-pane>
-            <i-tab-pane label="工具夹实体" name="entity">
-                <i-card dis-hover>
-                        <i-row type="flex" justify="space-between" align="middle" slot="title">
-                            <i-col>
-                                <i-row type="flex" align="middle" :gutter="16">
-                                    <i-col>工作夹实体</i-col>
-                                </i-row>
-                            </i-col>
-                            <i-col>
-                                <i-row type="flex" :gutter="16">
-                                    <i-col>
-                                        <i-input prefix="ios-search" placeholder="搜索工具夹实体" v-model="keyword" @keyup.enter.native="getFixTable()"/>
-                                    </i-col>
-                                </i-row>
-                            </i-col>
-                        </i-row>
-                        <i-table stripe :columns="tableCol.fix" :data="tableData.fix" :loading="tableLoading">
-                        </i-table>
-                        <br/>
-                        <i-page show-sizer show-total :total="pager.total" @on-change="getFixTable($event, null)" @on-page-size-change="getFixTable(null, $event)" />
-                    </i-card>
             </i-tab-pane>
             <i-tab-pane label="夹具出入库记录" name="IORecords">
                 <i-row style="margin-left: 15px;">
@@ -151,19 +127,25 @@
                     内容待定
                 </i-row>
             </i-tab-pane>
+            <i-tab-pane label="工具夹实体定位" name="Location">
+                <i-row style="margin-left: 15px;">
+                    内容待定
+                </i-row>
+            </i-tab-pane>
         </i-tabs>
     </i-card>
 </template>
 
 <script>
 const app = require("@/config");
-const tableCol = require("./tableCol");
+const axios = require("axios");
 export default {
     data () {
         return {
             app,
-            tableCol,
+            logs: [],
             showLog: false,
+            entityName: "",
             inRecords: [
                 {
                     Code: 'oooo-oooo',
@@ -258,32 +240,63 @@ export default {
             ],
             tabSelect: "",
             tableLoading: false,
-            fixInfo: {},
-            ruleForBasic: {},
             isSaving: false,
-            logs: [],
-            tableData: {},
-            pager: {
-                total: 0,
-                page: 1,
-                pageSize: 10
-            },
-            keyword: ''
+            Data: {},
+            EntityID: "",
+            // WorkcellID: "",
+            ruleForEntity: {}
         }
     },
     methods: {
-        savefixDetail () {
+        saveEntity () {
+            this.isSaving = true;
+            let form = this.$refs["form"];
+            form.validate(res => {
+                if (!res) return;
+                axios.post("/api/fwwb/SaveFix", this.Data, msg => {
+                    if (msg.success) {
+                        this.$Message.success("实体信息修改成功");
+                    } else {
+                        this.$Message.warning(msg.msg);
+                    }
+                    form.resetFields();
+                    this.isSaving = false;
+                    this.getFixEntity();
+                });
+            })
         },
-        getFixTable (page, pageSize) {
+        getFixEntity () {
+            axios.post("/api/fwwb/GetFix", {id: this.EntityID}, msg => {
+                this.Data = msg.data;
+            })
         }
     },
     mounted () {
-        this.tabSelect = "basicInfo";
+        app.title = "夹具实体";
+        this.$Spin.show({
+            render: (h) => {
+                return h('div', [
+                    h('Icon', {
+                        'class': 'spin-icon-load',
+                        props: {
+                            type: 'ios-loading',
+                            size: 18
+                        }
+                    }),
+                    h('div', '正在获取夹具实体信息，请稍候……')
+                ])
+            }
+        });
+        this.EntityID = this.$route.query.EntityID; // "6a9cf94f-39b7-4355-aa3e-43ba92cd0aa4";// "6a9cf94f-39b7-4355-aa3e-43ba92cd0aa4";//
+        // this.WorkcellID = this.$route.query.WorkcellID;// "7c19253d-7aa3-4b79-8d07-2958c46fc684";//
+        this.getFixEntity();
+        this.tabSelect = this.$route.query.tabSelect || "entityInfo";
+        this.$Spin.hide();
     }
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .title {
     font-size: 20px;
     color: #17233d;
