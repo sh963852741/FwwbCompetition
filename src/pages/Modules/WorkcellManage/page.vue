@@ -299,7 +299,6 @@ export default {
                     ]),
                     h('span', {
                         style: {
-                            display: data.isParent !== undefined ? 'flex' : 'none',
                             float: 'right',
                             width: '64px'
                         },
@@ -311,10 +310,16 @@ export default {
                             },
                             props: {
                                 size: 'small',
-                                icon: 'md-add'
+                                icon: data.isParent !== undefined ? 'md-add' : 'md-create'
                             },
                             on: {
-                                click: () => { this.addFixture(data) }
+                                click: () => {
+                                    if (data.isParent !== undefined) {
+                                        this.addFixture(data)
+                                    } else {
+                                        this.toDetail(data)
+                                    }
+                                }
                             }
                         }),
                         h('Button', {
@@ -323,11 +328,17 @@ export default {
                             },
                             props: {
                                 size: 'small',
-                                icon: 'md-remove',
+                                icon: data.isParent !== undefined ? 'md-remove' : 'ios-close',
                                 type: 'warning'
                             },
                             on: {
-                                click: () => { this.removeFixDef(data) }
+                                click: () => {
+                                    if (data.isParent !== undefined) {
+                                        this.removeFixDef(data)
+                                    } else {
+                                        this.removeFixture(data)
+                                    }
+                                }
                             }
                         })
                     ])
@@ -337,23 +348,7 @@ export default {
     },
     mounted () {
         app.title = "工作间管理"
-        axios.post("/api/security/GetOrgDetail", {}, msg => {
-            this.workcellInfo = msg.data;
-            axios.post("/api/fwwb/GetFixDefs", {departId: this.workcellInfo.ID}, msg => {
-                this.fixtureTree[0].children = msg.data;
-                let i = 0;
-                let j = 0;
-                for (i = 0; i < this.fixtureTree[0].children.length; i++) {
-                    this.$set(this.fixtureTree[0].children[i], 'title', this.fixtureTree[0].children[i].Name);
-                    this.$set(this.fixtureTree[0].children[i], 'children', this.fixtureTree[0].children[i].Entities);
-                    this.$set(this.fixtureTree[0].children[i], 'isParent', true);
-                    for (j = 0; j < this.fixtureTree[0].children[i].Entities.length; j++) {
-                         this.$set(this.fixtureTree[0].children[i].Entities[j], 'title', this.fixtureTree[0].children[i].Entities[j].Code);
-                     }
-                }
-            });
-            this.getUserTable();
-        });
+        this.init();
         // let ele = document.getElementById("bin1");
         // let instance = echarts.init(ele);
         // instance.setOption(this.bin1);
@@ -365,12 +360,40 @@ export default {
         // instance3.setOption(this.bin3);
     },
     methods: {
-        async selectTreeNode (e) {
-            if (e[0].isParent) { // 如果是夹具定义
-                this.fixDefInfo = e[0];
-                this.fixtures = await fixtureManager.getFixtures(this.fixDefInfo.WorkcellId, this.fixDefInfo.ID);
-            } else {
-                this.toDetail(e[0]);
+            init (refreshTree) {
+                axios.post("/api/security/GetOrgDetail", {}, msg => {
+                this.workcellInfo = msg.data;
+                axios.post("/api/fwwb/GetFixDefs", {departId: this.workcellInfo.ID}, msg => {
+                    this.fixtureTree[0].children = msg.data;
+                    let i = 0;
+                    let j = 0;
+                    for (i = 0; i < this.fixtureTree[0].children.length; i++) {
+                        this.$set(this.fixtureTree[0].children[i], 'title', this.fixtureTree[0].children[i].Name);
+                        this.$set(this.fixtureTree[0].children[i], 'children', this.fixtureTree[0].children[i].Entities);
+                        this.$set(this.fixtureTree[0].children[i], 'isParent', true);
+                        for (j = 0; j < this.fixtureTree[0].children[i].Entities.length; j++) {
+                            this.$set(this.fixtureTree[0].children[i].Entities[j], 'title', this.fixtureTree[0].children[i].Entities[j].SeqID);
+                        }
+                    }
+                    if (refreshTree) { // 这里是增加的时候才展开，增加后会刷新
+                        for (var x = 0; x < this.fixtureTree[0].children.length; x++) {
+                            this.$set(this.fixtureTree[0].children[x], 'expand', true);
+                        }
+                        this.getRefreshFixture(); // 刷新右下角的内容
+                    }
+                });
+                this.getUserTable();
+            });
+        },
+        async getRefreshFixture () {
+            this.fixtures = await fixtureManager.getFixtures(this.fixDefInfo.WorkcellId, this.fixDefInfo.ID);
+        },
+        async selectTreeNode (e) { // 如果是夹具实体只有点击修改笔的按钮才能跳转
+            if (e[0] !== undefined) { // 如果是夹具定义
+                if (e[0].isParent) {
+                    this.fixDefInfo = e[0];
+                    this.fixtures = await fixtureManager.getFixtures(this.fixDefInfo.WorkcellId, this.fixDefInfo.ID);
+                }
             }
         },
         addFixDef (data) {
@@ -407,14 +430,30 @@ export default {
         async saveWorkCell () {
             await fixtureManager.saveWorkCell(this.workcellInfo);
         },
-        async removeFixDef (data) {
-            await fixtureManager.removeFixDef(this.workcellInfo.ID, data.ID);
+        removeFixDef (data) {
+            this.$Modal.confirm({
+                title: "确认删除该夹具定义？",
+                onOk: async () => {
+                    let res = await fixtureManager.removeFixDef(this.workcellInfo.ID, data.ID);
+                    if (res.success) {
+                        this.$Message.success('已删除');
+                        this.fixDefInfo = {}; // 清空右边的内容，防止删了后字段还是原来的
+                        this.init();// 刷新一下
+                    }
+                }
+            });
         },
-        async removeFixture (data) {
-            let res = await fixtureManager.removeFixture(data.ID);
-            if (res.success) {
-                this.$Message.success('已删除');
-            }
+        removeFixture (data) {
+            this.$Modal.confirm({
+                title: "确认删除该夹具实体？",
+                onOk: async () => {
+                    let res = await fixtureManager.removeFixture(data.ID);
+                    if (res.success) {
+                        this.$Message.success('已删除');
+                        this.init(true);
+                    }
+                }
+            });
         },
         async saveFixDef () {
             let res = await fixtureManager.saveFixDef(this.fixDefInfo);
@@ -425,6 +464,13 @@ export default {
         submit () {
             let form = this.$refs["form"];
             form.submit(this.workcellInfo.ID, this.callbackFunc);
+            if (form.$vnode.componentOptions.tag === "fixture-form") {
+                this.init(true);
+                this.formData = {};// 清空表单
+            } else if (form.$vnode.componentOptions.tag === "fix-def-form") {
+                this.init();
+                this.formData = {};// 清空表单
+            }
         },
         toDetail (data) {
             if (data.nodeKey !== 0) this.$router.push({name: 'FixDetail', query: {EntityID: data.ID}});
