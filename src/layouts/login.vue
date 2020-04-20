@@ -18,6 +18,19 @@
                         </div>
                     </div>
                     <!-- main-form -->
+                    <Dropdown v-if="app.debug" style="position: absolute; top: 40px; right: 40px" @on-click="quickLogin">
+                        <Alert type="warning" show-icon>
+                            已开启快速登录
+                            <span slot="desc">该功能仅用于开发模式，鼠标放上来以进行快速登录。<br/>快来Pick你喜爱的小伙伴吧~</span>
+                        </Alert>
+                        <DropdownMenu slot="list">
+                            <DropdownItem name="汪文青">文青（S）</DropdownItem>
+                            <DropdownItem name="邵良颖">邵良（M）</DropdownItem>
+                            <DropdownItem name="宋润涵">润涵（II）</DropdownItem>
+                            <DropdownItem name="岳皓">岳皓（I）</DropdownItem>
+                            <DropdownItem name="黄玺">王炸（A）</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 </div>
             </div>
         </div>
@@ -25,12 +38,45 @@
 </template>
 
 <script>
-let app = require("@/config")
+let app = require("@/config");
+const axios = require("axios");
+let md5 = require("md5");
 export default {
     data () {
         return {
-            app
+            app,
+            dic: {
+                "汪文青": 1384552349,
+                "宋润涵": 15102242667,
+                "邵良颖": 15102242660,
+                "黄玺": 13606924649,
+                "岳皓": 13953246598
+            }
         };
+    },
+    methods: {
+        quickLogin (name) {
+            axios.post("/api/security/Login", {method: 'password', username: this.dic[name], pwd: md5('123456'), isRemember: false, isPwd: true}, msg => {
+                if (msg.success) {
+                    app.userInfo = msg.userInfo;
+                    let ps = app.userInfo.permissons;
+                    app.checkPermission = (p) => {
+                        return ps && ps.indexOf(p) >= 0;
+                    }
+                    this.$nextTick(() => {
+                        if (msg.success) {
+                            let path = this.$route.query.goto || app.dashboard;
+                            path = path === "/" ? app.dashboard : path;
+                            this.$router.push(path);
+                        } else {
+                            this.$Message.warning(msg.msg);
+                        }
+                    });
+                } else {
+                    this.$Message.warning(msg.msg);
+                }
+            });
+        }
     }
 }
 </script>
