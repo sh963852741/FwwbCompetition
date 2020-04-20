@@ -131,7 +131,7 @@
                             <i-table :columns="fixtureTableCol" :data="fixtures">
                                 <template slot="Action" slot-scope="{row}">
                                     <i-button @click="toDetail(row)">修改</i-button>
-                                    <i-button @click="removeFixture(row)" type="warning">删除</i-button>
+                                    <i-button @click="removeFixture(row)">删除</i-button>
                                 </template>
                             </i-table>
                         </i-col>
@@ -183,8 +183,8 @@
                             </i-select>
                         </template>
                         <template slot="Action" slot-scope="{row}">
-                            <i-button @click="delUser(row)" type="warning">移除</i-button>
                             <i-button @click="setPassword(row)">重置密码</i-button>
+                            <i-button @click="delUser(row)" type="warning">移除</i-button>
                         </template>
                     </i-table>
                 </i-tab-pane>
@@ -328,8 +328,7 @@ export default {
                             },
                             props: {
                                 size: 'small',
-                                icon: data.isParent !== undefined ? 'md-remove' : 'ios-close',
-                                type: 'warning'
+                                icon: data.isParent !== undefined ? 'md-remove' : 'ios-close'
                             },
                             on: {
                                 click: () => {

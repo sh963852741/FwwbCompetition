@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="Scrap">
         <div class="paper">
             <i-row>
                 <div class="blankPage"></div>
@@ -189,90 +189,96 @@ export default {
 }
 </script>
 
-<style>
-.wei_zhi_ju_zuo {
-    text-align: left;
-}
-.wen-zi-ju-you{
-    text-align: right;
-}
-.smallhang {
-    width: 101px;
-    height: 55px;
-    padding: 0px 10px;
-}
-.longhang {
-    width: 471px;
-    height: 55px;
-    padding: 10px 10px;
-    text-align: left;
-}
-.paper {
-    width: 800px;
-    height: 1400px;
-    margin: 18px auto;
-    background-color: white;
-    border: solid 1px rgb(198, 198, 198);
-    box-shadow:1px 1px 10px -2px #333333;
-}
-.blankPage {
-    height:108px;
-}
-.button-position{
-    float:right;
-    margin-top: 10px;
-}
-.headLine{
-    margin: 25px auto;
-    text-align: center;
-    font-size: 32px;
-    font-family: '';
-}
-.date{
-    margin-bottom: 15px;
-    margin-top: 15px;
-    margin-left:467px;
-    font-size: 16px;
-    font-family: 'FangSong';
-    display: inline-block;
-    letter-spacing: 1px;
-}
-table{
-    margin: 10px auto;
-    border-collapse: collapse;
-    text-align: center;
-    font-family: 'FangSong';
-    font-size: 24px;
-    line-height: 40px;
-}
-.cellFirst{
-    width: 155px;
-    height: 100px;
-    padding: 5px 10px;
-}
-.cellSecond{
-    width:450px;
-    height: 100px;
-    padding: 5px 10px;
-}
-.shu_zi_jian_ju{
-    letter-spacing: 2px;
-}
-.commentBox{
-    min-height:180px;
-    text-align: left;
-}
-.wen_zi_kao_you{
-    margin:0px;
-    text-align: right;
-}
-.add1 {
-        height: 80px;
-}
-.headline {
-    margin-top: 9px;
-    text-align: center;
-    font-size: 24px;
-    font-family: '';
+<style lang="less">
+#Scrap
+{
+    input {
+        text-align: center;
+    }
+    .wei_zhi_ju_zuo {
+        text-align: left;
+    }
+    .wen-zi-ju-you{
+        text-align: right;
+    }
+    .smallhang {
+        width: 101px;
+        height: 55px;
+        padding: 0px 10px;
+    }
+    .longhang {
+        width: 471px;
+        height: 55px;
+        padding: 10px 10px;
+        text-align: left;
+    }
+    .paper {
+        width: 800px;
+        height: 1400px;
+        margin: 18px auto;
+        background-color: white;
+        border: solid 1px rgb(198, 198, 198);
+        box-shadow:1px 1px 10px -2px #333333;
+    }
+    .blankPage {
+        height:108px;
+    }
+    .button-position{
+        float:right;
+        margin-top: 10px;
+    }
+    .headLine{
+        margin: 25px auto;
+        text-align: center;
+        font-size: 32px;
+        font-family: '';
+    }
+    .date{
+        margin-bottom: 15px;
+        margin-top: 15px;
+        margin-left:467px;
+        font-size: 16px;
+        font-family: 'FangSong';
+        display: inline-block;
+        letter-spacing: 1px;
+    }
+    table{
+        margin: 10px auto;
+        border-collapse: collapse;
+        text-align: center;
+        font-family: 'FangSong';
+        font-size: 24px;
+        line-height: 40px;
+    }
+    .cellFirst{
+        width: 155px;
+        height: 100px;
+        padding: 5px 10px;
+    }
+    .cellSecond{
+        width:450px;
+        height: 100px;
+        padding: 5px 10px;
+    }
+    .shu_zi_jian_ju{
+        letter-spacing: 2px;
+    }
+    .commentBox{
+        min-height:180px;
+        text-align: left;
+    }
+    .wen_zi_kao_you{
+        margin:0px;
+        text-align: right;
+    }
+    .add1 {
+            height: 80px;
+    }
+    .headline {
+        margin-top: 9px;
+        text-align: center;
+        font-size: 24px;
+        font-family: '';
+    }
 }
 </style>
