@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="Purchase">
         <div class="paper">
             <div class="blankPage"></div>
             <p class="headLine">采购入库申请表</p>
@@ -50,9 +50,16 @@
                 <tr>
                     <td class="cellFirst" >物品照片</td>
                     <td class="cellSecond">
-                        <i-upload  v-if="formData == null && files.length == 0 &&io.fieldAccess.Photo === 'w' && io.isMyStep" action="//jsonplaceholder.typicode.com/posts/" :before-upload="handleUpload">
-                            <i-button icon="ios-cloud-upload-outline" type="primary">上传照片</i-button>
-                        </i-upload>
+                        <Upload
+                            v-if="formData == null && files.length == 0 &&io.fieldAccess.Photo === 'w' && io.isMyStep"
+                            type="drag"
+                            action="//jsonplaceholder.typicode.com/posts/"
+                            :before-upload="handleUpload">
+                            <div style="padding: 20px 0">
+                                <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                                <p>Click or drag photo here to upload</p>
+                            </div>
+                        </Upload>
                         <div v-if="formData !== null">
                             <i-row>
                                 <Button type="text" style="text-align: left;width: 200px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{formData.name}}</Button>
@@ -69,7 +76,8 @@
                                 </i-row>
                             </template>
                         </div>
-                        <div v-else-if="io.fieldAccess.Description === 'r' || !io.isMyStep">无附件</div>
+                        <div v-else-if="io.fieldAccess.Description === 'r' || !io.isMyStep">无照片</div>
+                        <img :src="photo" v-show="photo"/>
                     </td>
                 </tr>
                 <tr v-show="io.fieldAccess.SOpinion">
@@ -151,6 +159,7 @@ const usage = "附件";
 export default {
     data () {
         return {
+            photo: "",
             icons: [
                 "",
                 "",
@@ -192,6 +201,12 @@ export default {
     methods: {
         handleUpload (file) {
             this.formData = file;
+            var reader = new FileReader();
+            var that = this;
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                that.photo = this.result;
+            }
             return false;
         },
         uploadFile () {
@@ -224,6 +239,7 @@ export default {
         },
         removeFormData () {
             this.formData = null;
+            this.photo = "";
         },
         getFiles () {
             axios.post("/api/cms/GetAttachments", {id: this.instanceId, relateTable: table, usage: usage}, msg => {
@@ -283,6 +299,17 @@ export default {
 </script>
 
 <style lang="less">
+#Purchase
+{
+    img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+    input {
+        text-align: center;
+    }
     .wei_zhi_ju_zuo {
         text-align: left;
     }
@@ -308,7 +335,7 @@ export default {
     }
     .paper {
     width: 800px;
-    height: 1200px;
+    height: 1300px;
     margin: 18px auto;
     background-color: white;
     border: solid 1px rgb(198, 198, 198);
@@ -361,4 +388,5 @@ export default {
     .shu_zi_jian_ju{
         letter-spacing: 2px;
     }
+}
 </style>
