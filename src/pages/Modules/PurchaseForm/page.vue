@@ -8,7 +8,7 @@
                 <tr>
                     <td class="cellFirst">工作间</td>
                     <td class="cellSecond">
-                        <i-input  v-if="io.fieldAccess.workCell === 'w' && io.isMyStep" v-model="io.data.WorkCell"/>
+                        <i-input  v-if="io.fieldAccess.WorkCell === 'w' && io.isMyStep" v-model="io.data.WorkCell"/>
                         <p v-else>{{io.data.WorkCell}}</p>
                     </td>
                 </tr>
@@ -387,6 +387,12 @@ export default {
     }
     .shu_zi_jian_ju{
         letter-spacing: 2px;
+    }
+    .headline {
+        margin-top: 9px;
+        text-align: center;
+        font-size: 24px;
+        font-family: '';
     }
 }
 </style>

@@ -55,7 +55,8 @@ export default {
             messageNum: 0,
             pagePath: {
                 '采购入库申请': 'purchaseform',
-                '报废申请': 'scrapform'
+                '报废申请': 'scrapform',
+                '夹具维修申请': 'maintainform'
             },
             userInfo: app.userInfo,
             bgImg: {
@@ -97,7 +98,10 @@ export default {
                 {
                     title: "报修申请",
                     routerTo: {
-                        name: "MaintainForm"
+                        name: "MaintainForm",
+                        query: {
+                            WorkCellID: this.ID
+                        }
                     },
                     icon: "md-hammer"
                 },
@@ -140,7 +144,8 @@ export default {
             } else if (router.name === "PurchaseForm") {
                 this.functionArray[2].routerTo.query.WorkCellID = this.workcellInfo.ID;
                 this.$router.push(router);
-            } else {
+            } else if (router.name === "MaintainForm") {
+                this.functionArray[3].routerTo.query.WorkCellID = this.workcellInfo.ID;
                 this.$router.push(router);
             }
         },
