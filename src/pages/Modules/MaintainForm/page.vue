@@ -3,7 +3,7 @@
          <div class="paper">
             <div class="blankPage"></div>
             <p class="headLine">报修申请表</p>
-            <p class="date">填表时间：{{nowDate}}</p>
+            <p class="date">申请时间：{{io.currentStep==='填写申请表' ? nowDate : io.data.AppDate}}</p>
             <table border="1">
                <tr>
                     <td class="cellFirst">工作间</td>
