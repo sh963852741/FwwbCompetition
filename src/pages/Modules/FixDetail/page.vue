@@ -123,8 +123,37 @@
                 </i-row>
             </i-tab-pane>
             <i-tab-pane label="工具夹寿命预测" name="lifePredic">
-                <i-row style="margin-left: 15px;">
-                    内容待定
+                <i-row style="margin: 15px;">
+                    <i-col span="7">
+                        <p class="p">总维修次数</p>
+                        <p class="p" style="margin-top: 24px;">000,000</p>
+                        <p class="p1">
+                            <span>000</span>
+                            <span style="vertical-align: top;font-size: 14px;">
+                                <Icon type="md-arrow-up" color="#da5953"/>本月新增
+                            </span>
+                        </p>
+                    </i-col>
+                    <i-col span="8">
+                        <p class="p">总维原因</p>
+                        <div id="reason" style="width:300px;height:200px"></div>
+                    </i-col>
+                    <i-col span="9">
+                        <p class="p">寿命预测</p>
+                        <p class="p2 center">剩余：0000年00月00日</p>
+                    </i-col>
+                </i-row>
+                <i-row style="margin: 15px;">
+                    <i-col span="15">
+                        <p class="p">每月维修量</p>
+                        <div id="count" style="width:500px;height:400px"></div>
+                    </i-col>
+                    <i-col span="8">
+                        <p class="p" style="margin-bottom: 35px">维修记录</p>
+                        <template v-for="(item, index) in logList.maintainLogs">
+                            <p :key=index>{{item}}</p>
+                        </template>
+                    </i-col>
                 </i-row>
             </i-tab-pane>
             <i-tab-pane label="工具夹实体定位" name="Location">
@@ -137,6 +166,7 @@
 </template>
 
 <script>
+const echarts = require("echarts");
 const app = require("@/config");
 const axios = require("axios");
 export default {
@@ -144,6 +174,23 @@ export default {
         return {
             app,
             logs: [],
+            logList: {
+                maintainLogs: [
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复"
+                ]
+            },
             showLog: false,
             entityName: "",
             inRecords: [
@@ -241,10 +288,73 @@ export default {
             tabSelect: "",
             tableLoading: false,
             isSaving: false,
-            Data: {},
+            Data: {
+                Code: ''
+            },
             EntityID: "",
             // WorkcellID: "",
-            ruleForEntity: {}
+            ruleForEntity: {},
+            reason: {
+                title: {
+                    // text: '社团类型',
+                    // left: '50%',
+                    // top: '80%',
+                    // textAlign: 'center',
+                    // textStyle: {
+                    //     color: '#515A6E',
+                    //     fontSize: '20',
+                    //     fontWeight: 'normal'
+                    // }
+                },
+                series: [{
+                    type: 'pie',
+                    radius: '35%',
+                    center: ['50%', '50%'],
+                    data: [{
+                        name: '报修原因1',
+                        value: 10
+                    }, {
+                        name: '报修原因2',
+                        value: 5
+                    }, {
+                        name: '报修原因3',
+                        value: 10
+                    }, {
+                        name: '报修原因4',
+                        value: 15
+                    }, {
+                        name: '报修原因5',
+                        value: 8
+                    }
+                    ],
+                    label: {
+                        position: 'outer',
+                        fontSize: '15'
+                    },
+                    left: 0,
+                    right: '0',
+                    top: 0,
+                    bottom: 0
+                }]
+            },
+            count: {
+                title: {
+                   // text: '每月维修量'
+                },
+                tooltip: {},
+                legend: {
+                    data: ['维修量']
+                },
+                xAxis: {
+                    data: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+                },
+                yAxis: {},
+                series: [{
+                    name: '维修量',
+                    type: 'bar',
+                    data: [5, 2, 3, 0, 1, 4, 0, 1, 7, 15, 1, 7]
+                }]
+            }
         }
     },
     methods: {
@@ -273,6 +383,12 @@ export default {
     },
     mounted () {
         app.title = "夹具实体";
+        let ele = document.getElementById("reason");
+        let instance = echarts.init(ele);
+        instance.setOption(this.reason);
+        let ele2 = document.getElementById("count");
+        let instance2 = echarts.init(ele2);
+        instance2.setOption(this.count);
         this.$Spin.show({
             render: (h) => {
                 return h('div', [
@@ -297,6 +413,24 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.center {
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+.p {
+    font-weight: bold;
+    font-size: 32px;
+}
+.p1 {
+    color: #da5953;
+    font-size: 32px;
+    font-weight: bold;
+}
+.p2 {
+    color: #da5953;
+    font-size: 36px;
+    font-weight: bold;
+}
 .title {
     font-size: 20px;
     color: #17233d;
