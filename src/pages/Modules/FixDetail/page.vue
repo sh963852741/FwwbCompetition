@@ -123,36 +123,85 @@
                 </i-row>
             </i-tab-pane>
             <i-tab-pane label="工具夹寿命预测" name="lifePredic">
-                <i-row style="margin: 15px;">
+                <i-row style="margin: 15px;" jtype="flex" justify="space-between">
                     <i-col span="7">
-                        <p class="p">总维修次数</p>
+                        <!-- <p class="p">总维修次数</p>
                         <p class="p" style="margin-top: 24px;">000,000</p>
                         <p class="p1">
                             <span>000</span>
                             <span style="vertical-align: top;font-size: 14px;">
                                 <Icon type="md-arrow-up" color="#da5953"/>本月新增
                             </span>
-                        </p>
+                        </p> -->
+                        <Card style="height:300px">
+                            <p slot="title">
+                                <Icon type="ios-film-outline"></Icon>
+                                总维修次数
+                            </p>
+                            <p class="p" style="margin-top: 40px;">123,001
+                                <span style="vertical-align: top;font-size: 14px;">
+                                    <Tag color="primary">每年</Tag>
+                                </span>
+                            </p>
+                            <p class="p1">
+                                <span>999</span>
+                                <span style="vertical-align: top;font-size: 14px;">
+                                    <Tag  color="error">
+                                        <Icon type="md-arrow-up" color="white"/>本月新增
+                                    </Tag>
+                                </span>
+                            </p>
+                        </Card>
                     </i-col>
-                    <i-col span="8">
-                        <p class="p">总维原因</p>
-                        <div id="reason" style="width:300px;height:200px"></div>
+                    <i-col span="8" offset="1">
+                        <!-- <p class="p">总维原因</p>
+                        <div id="reason" style="width:300px;height:200px"></div> -->
+                        <Card style="height:300px">
+                            <p slot="title">
+                                <Icon type="ios-film-outline"></Icon>
+                                总维修原因
+                            </p>
+                            <div id="reason" style="width:300px;height:200px"></div>
+                        </Card>
                     </i-col>
-                    <i-col span="9">
-                        <p class="p">寿命预测</p>
-                        <p class="p2 center">剩余：0000年00月00日</p>
+                    <i-col span="7" offset="1">
+                        <!-- <p class="p">寿命预测</p>
+                        <p class="p2 center">剩余：0000年00月00日</p> -->
+                        <Card style="height:300px">
+                            <p slot="title">
+                                <Icon type="ios-film-outline"></Icon>
+                                寿命预测
+                            </p>
+                            <p class="p2 center">剩余：<Br/>0年00月00日</p>
+                        </Card>
                     </i-col>
                 </i-row>
                 <i-row style="margin: 15px;">
                     <i-col span="15">
-                        <p class="p">每月维修量</p>
-                        <div id="count" style="width:500px;height:400px"></div>
+                        <!-- <p class="p">每月维修量</p>
+                        <div id="count" style="width:600px;height:400px"></div> -->
+                        <Card style="height:450px">
+                            <p slot="title">
+                                <Icon type="ios-film-outline"></Icon>
+                                每月维修量
+                            </p>
+                            <div id="count" style="width:650px;height:400px"></div>
+                        </Card>
                     </i-col>
-                    <i-col span="8">
-                        <p class="p" style="margin-bottom: 35px">维修记录</p>
+                    <i-col span="8"  offset="1">
+                        <!-- <p class="p" style="margin-bottom: 35px">维修记录</p>
                         <template v-for="(item, index) in logList.maintainLogs">
                             <p :key=index>{{item}}</p>
-                        </template>
+                        </template> -->
+                        <Card style="height:450px">
+                            <p slot="title">
+                                <Icon type="ios-film-outline"></Icon>
+                                维修记录
+                            </p>
+                            <template v-for="(item, index) in logList.maintainLogs">
+                                <p :key=index>{{item}}</p>
+                            </template>
+                        </Card>
                     </i-col>
                 </i-row>
             </i-tab-pane>
@@ -176,6 +225,8 @@ export default {
             logs: [],
             logList: {
                 maintainLogs: [
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
+                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
                     "xxxx年xx月xx日报修，xx年xx月xx日修复",
                     "xxxx年xx月xx日报修，xx年xx月xx日修复",
                     "xxxx年xx月xx日报修，xx年xx月xx日修复",
@@ -338,6 +389,7 @@ export default {
                 }]
             },
             count: {
+                color: ['#3398DB'],
                 title: {
                    // text: '每月维修量'
                 },
@@ -350,7 +402,7 @@ export default {
                 },
                 yAxis: {},
                 series: [{
-                    name: '维修量',
+                    name: '',
                     type: 'bar',
                     data: [5, 2, 3, 0, 1, 4, 0, 1, 7, 15, 1, 7]
                 }]
@@ -420,16 +472,19 @@ export default {
 .p {
     font-weight: bold;
     font-size: 32px;
+    text-align: center;
 }
 .p1 {
     color: #da5953;
     font-size: 32px;
     font-weight: bold;
+    text-align: center;
 }
 .p2 {
     color: #da5953;
     font-size: 36px;
     font-weight: bold;
+    text-align: center;
 }
 .title {
     font-size: 20px;
