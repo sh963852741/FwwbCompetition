@@ -86,14 +86,14 @@
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <i-row class="title" v-if="inRecords.length>0">出库记录:</i-row>
                         <template v-for="(item,index) in inRecords">
-                            <Alert type="success" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于{{item.RecOn}}入库成功</Alert>
+                            <Alert type="success" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于 {{item.RecOn}} 入库成功</Alert>
                         </template>
                     </i-row>
                     <i-row class="title" v-if="outRecords.length>0">入库记录:</i-row>
                     <i-row>
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <template v-for="(item,index) in outRecords">
-                            <Alert type="error" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于{{item.RecOn}}出库成功</Alert>
+                            <Alert type="error" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于 {{item.RecOn}} 出库成功</Alert>
                         </template>
                     </i-row>
                     <i-row v-if="inRecords.length==0 && outRecords.length==0">
@@ -105,16 +105,16 @@
                 <i-row style="margin-left: 15px;">
                     <i-row>
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
-                        <i-row class="title" v-if="maintRecords.length>0">出库记录:</i-row>
+                        <i-row class="title" v-if="maintRecords.length>0">维修记录:</i-row>
                         <template v-for="(item,index) in maintRecords">
-                            <Alert type="success" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于{{item.RecOn}}维修成功</Alert>
+                            <Alert type="success" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于 {{item.RecOn}} 维修成功</Alert>
                         </template>
                     </i-row>
-                    <i-row class="title" v-if="scrapRecords.length>0">入库记录:</i-row>
+                    <i-row class="title" v-if="scrapRecords.length>0">报废记录:</i-row>
                     <i-row>
                         <i-spin fix size="large" v-show="tableLoading"></i-spin>
                         <template v-for="(item,index) in scrapRecords">
-                            <Alert type="error" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于{{item.RecOn}}报废成功</Alert>
+                            <Alert type="error" :key="index">{{item.Code}}-{{item.SeqID}}由{{item.RecByName}}于 {{item.RecOn}} 报废成功</Alert>
                         </template>
                     </i-row>
                     <i-row v-if="scrapRecords.length==0 && maintRecords.length==0">
@@ -172,12 +172,12 @@
                                 <Icon type="ios-film-outline"></Icon>
                                 寿命预测
                             </p>
-                            <p class="p2 center">剩余：<Br/>0年00月00日</p>
+                            <p class="p2 center">剩余：<Br/>1年10月21日</p>
                         </Card>
                     </i-col>
                 </i-row>
                 <i-row style="margin: 15px;">
-                    <i-col span="15">
+                    <i-col span="16">
                         <!-- <p class="p">每月维修量</p>
                         <div id="count" style="width:600px;height:400px"></div> -->
                         <Card style="height:450px">
@@ -188,7 +188,7 @@
                             <div id="count" style="width:650px;height:400px"></div>
                         </Card>
                     </i-col>
-                    <i-col span="8"  offset="1">
+                    <i-col span="7"  offset="1">
                         <!-- <p class="p" style="margin-bottom: 35px">维修记录</p>
                         <template v-for="(item, index) in logList.maintainLogs">
                             <p :key=index>{{item}}</p>
@@ -198,15 +198,17 @@
                                 <Icon type="ios-film-outline"></Icon>
                                 维修记录
                             </p>
-                            <template v-for="(item, index) in logList.maintainLogs">
-                                <p :key=index>{{item}}</p>
-                            </template>
+                            <Scroll height="350">
+                                <template v-for="(item, index) in logList.maintainLogs">
+                                    <p :key=index>{{item}}</p>
+                                </template>
+                            </Scroll>
                         </Card>
                     </i-col>
                 </i-row>
             </i-tab-pane>
             <i-tab-pane label="工具夹实体定位" name="Location">
-                <i-row style="margin-left: 15px;">
+                <i-row style="margin-left: 15px;font-size: 40px;color: red;text-align: center">
                     内容待定
                 </i-row>
             </i-tab-pane>
@@ -225,115 +227,100 @@ export default {
             logs: [],
             logList: {
                 maintainLogs: [
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复",
-                    "xxxx年xx月xx日报修，xx年xx月xx日修复"
+                    "2020年01月01日报修，2020年01月07日修复",
+                    "2020年01月14日报修，2020年01月17日修复",
+                    "2020年01月22日报修，2020年01月26日修复",
+                    "2020年01月30日报修，2020年02月01日修复",
+                    "2020年02月04日报修，2020年02月09日修复",
+                    "2020年02月14日报修，2020年02月19日修复",
+                    "2020年02月21日报修，2020年02月27日修复",
+                    "2020年02月28日报修，2020年03月07日修复",
+                    "2020年03月10日报修，2020年03月14日修复",
+                    "2020年03月18日报修，2020年03月22日修复",
+                    "2020年03月25日报修，2020年03月27日修复",
+                    "2020年03月31日报修，2020年04月01日修复",
+                    "2020年04月03日报修，2020年04月11日修复",
+                    "2020年04月19日报修，2020年04月23日修复",
+                    "2020年04月29日报修，2020年05月13日修复"
                 ]
             },
             showLog: false,
             entityName: "",
-            inRecords: [
-                {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
-                }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
-                }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
-                }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
-                }
-            ],
             outRecords: [
                 {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年01月10日10：00"
                 }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年02月03日15：00"
                 }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年03月14日09：30"
                 }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年04月20日17：00"
+                }
+            ],
+            inRecords: [
+                {
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年02月01日09：00"
+                }, {
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年03月10日16：20"
+                }, {
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年04月17日15：40"
+                }, {
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年05月26日15：35"
                 }
             ],
             maintRecords: [
                 {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年02月02日10：01"
                 }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年03月13日11：11"
                 }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年04月19日14：50"
                 }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年05月27日17：10"
                 }
             ],
             scrapRecords: [
                 {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
-                }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
-                }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
-                }, {
-                    Code: 'oooo-oooo',
-                    SeqID: 0,
-                    RecByName: "OOO",
-                    RecOn: "0000年00月00日 00：00"
+                    Code: 'EF2189',
+                    SeqID: 13,
+                    RecByName: "李华",
+                    RecOn: "2020年05月28日10：44"
                 }
             ],
             tabSelect: "",
